@@ -1,5 +1,5 @@
-cmake_minimum_required(VERSION 3.0)
-
+cmake_minimum_required(VERSION 3.1)
+set (CMAKE_CXX_STANDARD 11)
 find_package(Qt5 REQUIRED COMPONENTS Gui Qml Core)
 
 set(CMAKE_AUTOMOC ON)
