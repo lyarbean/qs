@@ -18,17 +18,18 @@ public:
     virtual PositionManager* positionManager() const override;
 
 public slots:
-    virtual void onTick(TickInfo* info) override;
-    virtual void onTrade(TradeInfo* info) override;
-    virtual void onOrder(OrderInfo* info) override;
-    virtual void onPoisition(PoisitionInfo* info) override;
-    virtual void onAccount(AccountInfo* info) override;
-    virtual void onContract(ContractInfo* info) override;
-    virtual void onLog(LogInfo* info) override;
-    virtual void sendOrder(OrderRequest* request, const QUuid& gateway) override;
-    virtual void cancelOrder(CancelOrderRequest* request, const QUuid& gateway) override;
-    virtual void Subscribe(SubscribeRequest* request, const QUuid& gateway) override;
-    void sendOrder(OrderRequest* request);
+    virtual void onTick(TickInfoPointer& info) override;
+    virtual void onTrade(TradeInfoPointer& info) override;
+    virtual void onOrder(OrderInfoPointer& info) override;
+    virtual void onPoisition(PoisitionInfoPointer& info) override;
+    virtual void onAccount(AccountInfoPointer& info) override;
+    virtual void onContract(ContractInfoPointer& info) override;
+    virtual void onLog(LogInfoPointer& info) override;
+    virtual void sendOrder(OrderRequestPointer& request, const QUuid& gateway) override;
+    virtual void cancelOrder(CancelOrderRequestPointer& request, const QUuid& gateway) override;
+    virtual void Subscribe(SubscribeRequestPointer& request, const QUuid& gateway) override;
+    void sendOrder(OrderRequestPointer& request);
+
 private:
     DefaultEnginePrivate* const d;
 };

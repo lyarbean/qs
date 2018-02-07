@@ -3,9 +3,7 @@
 #include "nulltest.h"
 using namespace Qs;
 
-
-
-int main (int argc, char* argv[]) {
+int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
     auto engine = new DefaultEngine();
     auto gateway = new NullGateway();
@@ -13,10 +11,11 @@ int main (int argc, char* argv[]) {
     auto strategy = new NullStrategy;
     engine->addStrategy(strategy);
     // TODO use signal slot connection to elimite this
-    strategy->setEngine(engine);
+    QObject::connect(strategy, &StrategyAbstract::order,
+                     [&](OrderRequestPointer& r) { engine->sendOrder(r, gatewayId); });
     engine->connectServers();
     QMetaObject::invokeMethod(gateway, "run");
-    QTimer::singleShot(elapsed, engine, [&](){
+    QTimer::singleShot(elapsed, engine, [&]() {
         // Print the results
         strategy->count();
         gateway->count();

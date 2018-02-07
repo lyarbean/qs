@@ -12,61 +12,105 @@ namespace Qs {
 const quint64 elapsed = 100000; // 100 seconds
 class NullTickInfo : public TickInfo {
 public:
-    virtual QString ticker() const {}
-    virtual QString tickerName() const {}
-    virtual double averagePrice() const {}
-    virtual double lastPrice() const {}
-    virtual double preClosePrice() const {}
-    virtual double openPrice() const {}
-    virtual double closePrice() const {}
-    virtual double highPrice() const {}
-    virtual double lowPrice() const {}
-    virtual quint64 volume() const {}
-    virtual double turnover() const {}
-    virtual double bidPrice(OrderSequenceType which) const {}
-    virtual quint64 bidVolume(OrderSequenceType which) const {}
-    virtual double askPrice(OrderSequenceType which) const {}
-    virtual quint64 askVolume(OrderSequenceType which) const {}
-    virtual quint64 datetime() const {} // YYYYMMDD
-    virtual qint32 date() const {} // YYYYMMDD
-    virtual qint32 day() const {}
-    virtual qint32 hour() const {}
-    virtual qint32 minute() const {}
-    virtual qint32 second() const {}
-    virtual qint32 millisecond() const {}
-    virtual quint64 msecsSinceEpoch() const {}
+    virtual QString ticker() const {
+        return QString("null");
+    }
+    virtual QString tickerName() const {
+        return QString();
+    }
+    virtual double averagePrice() const {
+        return 0.0;
+    }
+    virtual double lastPrice() const {
+        return 0.0;
+    }
+    virtual double preClosePrice() const {
+        return 0.0;
+    }
+    virtual double openPrice() const {
+        return 0.0;
+    }
+    virtual double closePrice() const {
+        return 0.0;
+    }
+    virtual double highPrice() const {
+        return 0.0;
+    }
+    virtual double lowPrice() const {
+        return 0.0;
+    }
+    virtual quint64 volume() const {
+        return 0;
+    }
+    virtual double turnover() const {
+        return 0.0;
+    }
+    virtual double bidPrice(OrderSequenceType which) const {
+        return 0.0;
+    }
+    virtual quint64 bidVolume(OrderSequenceType which) const {
+        return 0;
+    }
+    virtual double askPrice(OrderSequenceType which) const {
+        return 0.0;
+    }
+    virtual quint64 askVolume(OrderSequenceType which) const {
+        return 0;
+    }
+    virtual quint64 datetime() const {
+        return 0;
+    } // YYYYMMDD
+    virtual qint32 date() const {
+        return 0;
+    } // YYYYMMDD
+    virtual qint32 day() const {
+        return 0;
+    }
+    virtual qint32 hour() const {
+        return 0;
+    }
+    virtual qint32 minute() const {
+        return 0;
+    }
+    virtual qint32 second() const {
+        return 0;
+    }
+    virtual qint32 millisecond() const {
+        return 0;
+    }
+    virtual quint64 msecsSinceEpoch() const {
+        return 0;
+    }
 };
 
 class NullOrderRequest : public OrderRequest {};
 
 class NullStrategy : public StrategyAbstract {
 public:
-    NullStrategy() : received(0) {}
-    ~NullStrategy() {}
+    NullStrategy()
+      : received(0) {
+    }
+    ~NullStrategy() {
+    }
     void count() {
         qCritical() << "Tick Received" << received;
     }
-    virtual void setEngine(EngineAbstract* engine) {
-        this->engine = engine;
-    }
-    virtual void onTick(TickInfo* info) override {
+
+    virtual void onTick(TickInfoPointer& info) override {
         received++;
-        static NullOrderRequest request;
-        // I DO KNOW IT IS
-       static_cast<DefaultEngine*>(engine)->sendOrder(&request);
+        OrderRequestPointer request(new NullOrderRequest);
+        emit order(request);
     }
-    virtual void onTrade(TradeInfo* info) override {}
-    virtual void onOrder(OrderInfo* info) override {}
+    virtual void onTrade(TradeInfoPointer& info) override {
+    }
+    virtual void onOrder(OrderInfoPointer& info) override {
+    }
     quint64 received;
-    EngineAbstract* engine;
 };
-
-
 
 class NullGateway : public GatewayAbstract {
     Q_OBJECT
 public:
-
     NullGateway() {
         received = 0;
         moveToThread(&thread);
@@ -75,27 +119,35 @@ public:
     ~NullGateway() {
         thread.quit();
     }
-    virtual void connectServer() {}
-    virtual void closeServer() {}
-    virtual void queryAccount() {}
-    virtual void queryPosition() {}
-    virtual void sendOrder(OrderRequest* request) {
-        received ++;
+    virtual void connectServer() {
     }
-    virtual void cancelOrder(CancelOrderRequest* request) {}
-    virtual void Subscribe(SubscribeRequest* request) {}
+    virtual void closeServer() {
+    }
+    virtual void queryAccount() {
+    }
+    virtual void queryPosition() {
+    }
+    virtual void sendOrder(OrderRequestPointer& request) {
+        received++;
+    }
+    virtual void cancelOrder(CancelOrderRequestPointer& request) {
+    }
+    virtual void Subscribe(SubscribeRequestPointer& request) {
+    }
     Q_INVOKABLE void run() {
         while (true) {
-            auto tick = new NullTickInfo;
+            // FIXME
+            TickInfoPointer tick = QSharedPointer<NullTickInfo>::create();
             emit hasTick(tick);
         }
     }
     void count() {
         qCritical() << "Order Received" << received;
     }
+
 private:
     QThread thread;
     quint64 received;
 };
-}
+} // namespace Qs
 #endif // OZ_NULLTEST_H

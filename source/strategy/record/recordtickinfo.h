@@ -16,26 +16,16 @@ struct RecordTickInfo {
     double lowPrice;
     quint64 volume;
     double turnover;
-    double bidPrice[TickInfo::TenthOrder+1];
-    quint64 bidVolume[TickInfo::TenthOrder+1];
-    double askPrice[TickInfo::TenthOrder+1];
-    quint64 askVolume[TickInfo::TenthOrder+1];
+    double bidPrice[TickInfo::TenthOrder + 1];
+    quint64 bidVolume[TickInfo::TenthOrder + 1];
+    double askPrice[TickInfo::TenthOrder + 1];
+    quint64 askVolume[TickInfo::TenthOrder + 1];
     quint64 datetime; // YYYYmmddHHMMSSsss
 };
 
-inline QDataStream &operator<<(QDataStream& stream, const RecordTickInfo &info) {
-    stream << info.magic
-        << info.ticker
-        << info.tickerName
-        << info.averagePrice
-        << info.lastPrice
-        << info.preClosePrice
-        << info.openPrice
-        << info.closePrice
-        << info.highPrice
-        << info.lowPrice
-        << info.volume
-        << info.turnover;
+inline QDataStream& operator<<(QDataStream& stream, const RecordTickInfo& info) {
+    stream << info.magic << info.ticker << info.tickerName << info.averagePrice << info.lastPrice << info.preClosePrice
+           << info.openPrice << info.closePrice << info.highPrice << info.lowPrice << info.volume << info.turnover;
     for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
         stream << info.bidPrice[i];
     }
@@ -51,19 +41,10 @@ inline QDataStream &operator<<(QDataStream& stream, const RecordTickInfo &info) 
     stream << info.datetime; // YYYYmmddHHMMSSsss
 }
 
-inline QDataStream &operator>>(QDataStream& stream, RecordTickInfo &info) {
-    stream >> info.magic
-        >> info.ticker
-        >> info.tickerName
-        >> info.averagePrice
-        >> info.lastPrice
-        >> info.preClosePrice
-        >> info.openPrice
-        >> info.closePrice
-        >> info.highPrice
-        >> info.lowPrice
-        >> info.volume
-        >> info.turnover;
+inline QDataStream& operator>>(QDataStream& stream, RecordTickInfo& info) {
+    stream >> info.magic >> info.ticker >> info.tickerName >> info.averagePrice >> info.lastPrice >>
+        info.preClosePrice >> info.openPrice >> info.closePrice >> info.highPrice >> info.lowPrice >> info.volume >>
+        info.turnover;
     for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
         stream >> info.bidPrice[i];
     }
@@ -78,7 +59,6 @@ inline QDataStream &operator>>(QDataStream& stream, RecordTickInfo &info) {
     }
     stream >> info.datetime; // YYYYmmddHHMMSSsss
 }
-
-}
+} // namespace Qs
 
 #endif // OZ_RECORDTICKINFO_H

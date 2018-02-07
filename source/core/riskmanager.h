@@ -1,15 +1,12 @@
 #ifndef OZ_RISKMANAGER_H
 #define OZ_RISKMANAGER_H
-
+#include "datatypes.h"
 class QUuid;
 namespace Qs {
-class OrderRequest;
-class RiskManager
-{
+class RiskManager {
 public:
     RiskManager();
-    bool check(OrderRequest* request, const QUuid& gateway);
+    bool check(OrderRequestPointer& request, const QUuid& gateway);
 };
-
-}
+} // namespace Qs
 #endif // OZ_RISKMANAGER_H

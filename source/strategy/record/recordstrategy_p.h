@@ -4,7 +4,6 @@
 #include <QMap>
 #include <QFile>
 
-
 namespace Qs {
 class EngineAbstract;
 class RecordStrategy;

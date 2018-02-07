@@ -4,22 +4,20 @@
 
 namespace Qs {
 
-class SinaStrategy : public QObject, public Qs::StrategyAbstract
-{
+class SinaStrategy : public Qs::StrategyAbstract {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID  "com.investredcat.QTrader.StrategyAbstract")
+    Q_PLUGIN_METADATA(IID "com.investredcat.QuantitativeSystem.StrategyAbstract")
     Q_INTERFACES(Qs::StrategyAbstract)
 
 public:
     explicit SinaStrategy();
-    virtual void setEngine(EngineAbstract* engine);
-    virtual void onTick(TickInfo* info);
-    virtual void onTrade(TradeInfo* info);
-    virtual void onOrder(OrderInfo* info);
+    virtual void onTick(TickInfoPointer& info);
+    virtual void onTrade(TradeInfoPointer& info);
+    virtual void onOrder(OrderInfoPointer& info);
 
 private:
     class SinaStrategyPrivate* const d;
 };
-}
+} // namespace Qs
 
 #endif // OZ_SINASTRATEGY_H

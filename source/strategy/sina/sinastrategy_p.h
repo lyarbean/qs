@@ -43,29 +43,27 @@ struct SinaStrategyPart {
     bool hasP3 = false;
 };
 
-class SinaStrategyPrivate
-{
+class SinaStrategyPrivate {
 public:
     SinaStrategyPrivate(SinaStrategy* q);
     virtual ~SinaStrategyPrivate();
     double downside(quint32 n, const QString& ticker) const;
     double averageBidAskDiff(quint32 count, const QString& ticker) const;
-    double turnoverRatio (quint32 n, quint32 m, const QString& ticker) const;
+    double turnoverRatio(quint32 n, quint32 m, const QString& ticker) const;
     void getVolumes(quint64& askVolume, quint64& bidVolume, const QString& ticker) const;
 
-    void prepareToExit(const SinaStrategyPart& part, TickInfo* info);
-    void cancelBidOrders(const SinaStrategyPart& part, TickInfo* info);
-    void cancelAskOrders(const SinaStrategyPart& part, TickInfo* info);
-    void applyAskOrders(const SinaStrategyPart& part, TickInfo* info);
-    void applyBidOrders(const SinaStrategyPart& part, TickInfo* info);
+    void prepareToExit(const SinaStrategyPart& part, TickInfoPointer& info);
+    void cancelBidOrders(const SinaStrategyPart& part, TickInfoPointer& info);
+    void cancelAskOrders(const SinaStrategyPart& part, TickInfoPointer& info);
+    void applyAskOrders(const SinaStrategyPart& part, TickInfoPointer& info);
+    void applyBidOrders(const SinaStrategyPart& part, TickInfoPointer& info);
 
     class SinaStrategy* const q;
     QMap<QString, SinaStrategyPart> parts;
 
-   // TODO group by ticker
+    // TODO group by ticker
     // struct Parameter { ... };
-
 };
-}
+} // namespace Qs
 
 #endif // SINASTRATEGYPRIVATE_H

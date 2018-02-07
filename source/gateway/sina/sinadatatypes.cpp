@@ -16,18 +16,18 @@ public:
     double lowPrice;
     quint64 volume;
     double turnover;
-    double bidPrice[TickInfo::TenthOrder+1] = {0.0};
-    quint64 bidVolume[TickInfo::TenthOrder+1] = {0};
-    double askPrice[TickInfo::TenthOrder+1] = {0.0};
-    quint64 askVolume[TickInfo::TenthOrder+1] = {0};
+    double bidPrice[TickInfo::TenthOrder + 1] = {0.0};
+    quint64 bidVolume[TickInfo::TenthOrder + 1] = {0};
+    double askPrice[TickInfo::TenthOrder + 1] = {0.0};
+    quint64 askVolume[TickInfo::TenthOrder + 1] = {0};
     quint64 datetime; // YYYYmmddHHMMSSsss
-//     qint32 date; // YYYYMMDD
-//     qint32 day;
-//     qint32 hour;
-//     qint32 minute;
-//     qint32 second;
-//     qint32 millisecond;
-//     quint64 msecsSinceEpoch;
+    //     qint32 date; // YYYYMMDD
+    //     qint32 day;
+    //     qint32 hour;
+    //     qint32 minute;
+    //     qint32 second;
+    //     qint32 millisecond;
+    //     quint64 msecsSinceEpoch;
 };
 
 void SinaTickInfoPrivate::parse(const QString& source) {
@@ -75,11 +75,11 @@ void SinaTickInfoPrivate::parse(const QString& source) {
     datetime = day.toULongLong();
 }
 
-
-SinaTickInfo::SinaTickInfo(const QString& source) : d(new SinaTickInfoPrivate) {
+SinaTickInfo::SinaTickInfo(const QString& source)
+  : d(new SinaTickInfoPrivate) {
     d->parse(source);
 }
-SinaTickInfo::~SinaTickInfo () {
+SinaTickInfo::~SinaTickInfo() {
     delete d;
 }
 
@@ -148,40 +148,13 @@ quint64 SinaTickInfo::datetime() const {
     return d->datetime;
 } // YYYYMMDD
 
-qint32 SinaTickInfo::date() const {
-    return 0;
-} // YYYYMMDD
-
-qint32 SinaTickInfo::day() const {
-    return 0;
-}
-
-qint32 SinaTickInfo::hour() const {
-    return 0;
-}
-
-qint32 SinaTickInfo::minute() const {
-    return 0;
-}
-
-qint32 SinaTickInfo::second() const {
-    return 0;
-}
-
-qint32 SinaTickInfo::millisecond() const {
-    return 0;
-}
-
-quint64 SinaTickInfo::msecsSinceEpoch() const {
-    return 0;
-}
-
 class SinaSubscribeRequestPrivate {
 public:
     QString ticker;
 };
 
-SinaSubscribeRequest::SinaSubscribeRequest(const QString& ticker) : d (new SinaSubscribeRequestPrivate) {
+SinaSubscribeRequest::SinaSubscribeRequest(const QString& ticker)
+  : d(new SinaSubscribeRequestPrivate) {
     d->ticker = ticker;
 }
 
@@ -192,5 +165,4 @@ SinaSubscribeRequest::~SinaSubscribeRequest() {
 QString SinaSubscribeRequest::ticker() const {
     return d->ticker;
 }
-
-}
+} // namespace Qs

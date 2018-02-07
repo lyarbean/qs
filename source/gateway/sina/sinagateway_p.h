@@ -11,8 +11,7 @@ struct MemoryStruct {
 
 namespace Qs {
 
-class SinaGatewayPrivate
-{
+class SinaGatewayPrivate {
 public:
     SinaGatewayPrivate(SinaGateway* q);
     virtual ~SinaGatewayPrivate();
@@ -24,6 +23,6 @@ public:
     QTimer* timer;
     QStringList urls;
 };
-}
+} // namespace Qs
 
 #endif // SINAGATEWAYPRIVATE_H

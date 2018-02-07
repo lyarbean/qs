@@ -2,18 +2,19 @@
 #define OZ_GATEWAYABSTRACT_H
 #include <QObject>
 #include <QtPlugin>
+#include "datatypes.h"
 namespace Qs {
-class CancelOrderRequest;
-class OrderRequest;
-class SubscribeRequest;
-
-class AccountInfo;
-class ContractInfo;
-class LogInfo;
-class OrderInfo;
-class PoisitionInfo;
-class TickInfo;
-class TradeInfo;
+// class CancelOrderRequest;
+// class OrderRequest;
+// class SubscribeRequest;
+//
+// class AccountInfoPointer;
+// class ContractInfoPointer;
+// class LogInfoPointer;
+// class OrderInfoPointer;
+// class PoisitionInfoPointer;
+// class TickInfoPointer;
+// class TradeInfoPointer;
 
 class GatewayAbstract : public QObject {
     Q_OBJECT
@@ -22,19 +23,19 @@ public:
     virtual void closeServer() = 0;
     virtual void queryAccount() = 0;
     virtual void queryPosition() = 0;
-    virtual void sendOrder(OrderRequest* request) = 0;
-    virtual void cancelOrder(CancelOrderRequest* request) = 0;
-    virtual void Subscribe(SubscribeRequest* request) = 0;
+    virtual void sendOrder(OrderRequestPointer& request) = 0;
+    virtual void cancelOrder(CancelOrderRequestPointer& request) = 0;
+    virtual void Subscribe(SubscribeRequestPointer& request) = 0;
 signals:
-    void hasTick(TickInfo* info);
-    void hasTrade(TradeInfo* info);
-    void hasOrder(OrderInfo* info);
-    void hasPoisition(PoisitionInfo* info);
-    void hasAccount(AccountInfo* info);
-    void hasContract(ContractInfo* info);
-    void hasLog(LogInfo* info);
+    void hasTick(TickInfoPointer& info);
+    void hasTrade(TradeInfoPointer& info);
+    void hasOrder(OrderInfoPointer& info);
+    void hasPoisition(PoisitionInfoPointer& info);
+    void hasAccount(AccountInfoPointer& info);
+    void hasContract(ContractInfoPointer& info);
+    void hasLog(LogInfoPointer& info);
 };
 } // namespace Qs
-Q_DECLARE_INTERFACE (Qs::GatewayAbstract, "com.investredcat.QTrader.GatewayAbstract")
+Q_DECLARE_INTERFACE(Qs::GatewayAbstract, "com.investredcat.QuantitativeSystem.GatewayAbstract")
 
 #endif // OZ_GATEWAYABSTRACT_H

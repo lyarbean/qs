@@ -25,17 +25,17 @@ public:
     virtual double askPrice(OrderSequenceType which) const override;
     virtual quint64 askVolume(OrderSequenceType which) const override;
     virtual quint64 datetime() const override; // YYYYMMDD
-    virtual qint32 date() const override; // YYYYMMDD
-    virtual qint32 day() const override;
-    virtual qint32 hour() const override;
-    virtual qint32 minute() const override;
-    virtual qint32 second() const override;
-    virtual qint32 millisecond() const override;
-    virtual quint64 msecsSinceEpoch() const override;
-private:
-    SinaTickInfoPrivate *d;
-};
+    //     virtual qint32 date() const override;      // YYYYMMDD
+    //     virtual qint32 day() const override;
+    //     virtual qint32 hour() const override;
+    //     virtual qint32 minute() const override;
+    //     virtual qint32 second() const override;
+    //     virtual qint32 millisecond() const override;
+    //     virtual quint64 msecsSinceEpoch() const override;
 
+private:
+    SinaTickInfoPrivate* d;
+};
 
 class SinaTradeInfo {
 public:
@@ -44,7 +44,7 @@ public:
 
 class SinaOrderInfo {
 public:
-    virtual ~ SinaOrderInfo(){};
+    virtual ~SinaOrderInfo(){};
 };
 
 class SinaAccountInfo {
@@ -69,15 +69,15 @@ public:
 
 class SinaOrderRequest {
 public:
-    virtual ~ SinaOrderRequest(){};
+    virtual ~SinaOrderRequest(){};
 };
 
-
-class SinaSubscribeRequest: public SubscribeRequest {
+class SinaSubscribeRequest : public SubscribeRequest {
 public:
     explicit SinaSubscribeRequest(const QString& ticker);
     virtual ~SinaSubscribeRequest();
     QString ticker() const override;
+
 private:
     class SinaSubscribeRequestPrivate* d;
 };
