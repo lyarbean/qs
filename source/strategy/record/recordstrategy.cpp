@@ -10,7 +10,7 @@ RecordStrategyPrivate::RecordStrategyPrivate(RecordStrategy* q)
     file.setFileName("/tmp/sina.data");
     if (file.open(QIODevice::WriteOnly | QIODevice::Unbuffered)) {
         stream.setDevice(&file);
-        stream.setVersion(QDataStream::Qt_5_6);
+        stream.setVersion(QDataStream::Qt_5_5);
     }
 }
 RecordStrategyPrivate::~RecordStrategyPrivate() {
