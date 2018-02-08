@@ -64,14 +64,19 @@ double SinaStrategyPrivate::averageBidAskDiff(quint32 count, const QString& tick
         throw std::logic_error("averageBidAskDiff: No adequate ticks");
     }
     double bid = 0.0, ask = 0.0;
-
+/**
     auto iter = subTickInfo.rbegin();
     for (size_t p = 0; p < count; ++p) {
         bid += (*iter).lastBidVolume;
         ask += (*iter).lastAskVolume;
         ++iter;
     }
-
+**/
+    int c = subTickInfo.count();
+    for (size_t p = 0; p < count; ++p) {
+        bid += subTickInfo[c-1-p].lastBidVolume;
+        ask += subTickInfo[c-1-p].lastAskVolume;
+    }
     if (equalTo(bid + ask, 0.0)) {
         return 0.0;
         // throw std::logic_error("averageBidAskDiff: bid + ask == 0");
