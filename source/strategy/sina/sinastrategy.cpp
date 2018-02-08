@@ -88,19 +88,21 @@ double SinaStrategyPrivate::turnoverRatio(quint32 n, quint32 m, const QString& t
     if (!(n && m)) {
         return 0.0;
     }
-    auto& subTickInfo = parts[ticker].subTickInfos;
-    auto s = subTickInfo.size();
+    auto& subTickInfos = parts[ticker].subTickInfos;
+    auto s = subTickInfos.size();
     if (n >= s || m >= s) {
         throw std::logic_error("No adequate ticks");
     }
     double turnoverN = 0.0;
     double turnoverM = 0.0;
     double t = static_cast<double>(n) / static_cast<double>(m);
-    auto iter = subTickInfo.rbegin();
-    auto iterN = iter + n;
-    auto iterM = iter + m;
-    turnoverN = (*iter).turnover - (*iterN).turnover;
-    turnoverM = (*iter).turnover - (*iterM).turnover;
+    
+    auto& subTickInfo = subTickInfos.last();
+    auto& subTickInfoM = subTickInfos[s-m-1];
+    auto& subTickInfoN = subTickInfos[s-n-1];
+
+    turnoverN = subTickInfo.turnover - subTickInfoN.turnover;
+    turnoverM = subTickInfo.turnover - subTickInfoM.turnover;
     if (lessThanOrEqualTo(turnoverN, 1E-6)) {
         throw std::logic_error("No trade happens " + std::to_string(turnoverN));
     }
