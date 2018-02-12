@@ -5,7 +5,7 @@ namespace Qs {
 class RecordStrategyPrivate;
 class RecordStrategy : public StrategyAbstract {
     Q_OBJECT
-    Q_PLUGIN_METADATA(IID "com.investredcat.QuantitativeSystem.StrategyAbstract")
+    Q_PLUGIN_METADATA(IID "com.investredcat.QuantitativeSystem.StrategyAbstract" FILE "recordstrategy.json")
     Q_INTERFACES(Qs::StrategyAbstract)
 
 public:

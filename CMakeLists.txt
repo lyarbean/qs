@@ -1,11 +1,12 @@
 cmake_minimum_required(VERSION 3.1)
 set (CMAKE_CXX_STANDARD 11)
-find_package(Qt5 REQUIRED COMPONENTS Gui Qml Core)
+find_package(Qt5 REQUIRED COMPONENTS Gui Qml Core Widgets)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_VERBOSE_MAKEFILE ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
+string(TIMESTAMP BUILD_DATETIME "%Y-%m-%d %H:%M")
 
 ## Add Options and customized flags
 

@@ -96,6 +96,8 @@ public:
 
 typedef QSharedPointer<ContractInfo> ContractInfoPointer;
 
+
+// TODO Requests are issue by engines, we may fix their structures
 class OrderRequest {
 public:
     virtual ~OrderRequest(){};
