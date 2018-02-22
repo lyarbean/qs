@@ -1,5 +1,5 @@
-#ifndef OZ_UTILS_H
-#define OZ_UTILS_H
+#ifndef QS_UTILS_H
+#define QS_UTILS_H
 #include <QDateTime>
 namespace Qs {
 const double epsilon = 1E-10;
@@ -79,4 +79,4 @@ inline quint64 msecsSinceEpochOf(quint64 datetime) {
     return QDateTime::fromString(QString::number(datetime), "yyyyMMddHHmmsszzz").toMSecsSinceEpoch();
 }
 } // namespace Qs
-#endif //  OZ_UTILS_H
+#endif //  QS_UTILS_H

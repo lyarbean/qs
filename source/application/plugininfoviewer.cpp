@@ -17,24 +17,23 @@ class MainWindow : public QMainWindow {
     Q_OBJECT
 public:
     MainWindow();
+
     void setupUi();
     void connectSinalSlot();
     void showPluginInfo();
+
 private:
     QLabel* pluginPath;
-    QTextEdit *textEdit;
+    QTextEdit* textEdit;
     QPushButton* button;
 };
 
-MainWindow::MainWindow()
-{
+MainWindow::MainWindow() {
     setupUi();
     connectSinalSlot();
 }
 
-
-void MainWindow::setupUi()
-{
+void MainWindow::setupUi() {
     QVBoxLayout* verticalBox = new QVBoxLayout;
     QHBoxLayout* horizontalBox = new QHBoxLayout;
     pluginPath = new QLabel(this);
@@ -50,14 +49,12 @@ void MainWindow::setupUi()
     setCentralWidget(c);
 }
 
-void MainWindow::connectSinalSlot()
-{
+void MainWindow::connectSinalSlot() {
     connect(button, &QPushButton::released, this, &MainWindow::showPluginInfo);
 }
 
-void MainWindow::showPluginInfo()
-{
-    auto fileName = QFileDialog::getOpenFileName(this, tr("Open Plugin"), QDir::homePath(), tr("Plugins (*.so)"));
+void MainWindow::showPluginInfo() {
+    auto fileName = QFileDialog::getOpenFileName(this, tr("Open Plugin"), QDir::currentPath(), tr("Plugins (*.so)"));
 
     QPluginLoader loader(fileName);
     QObject* plugin = loader.instance();
@@ -68,8 +65,9 @@ void MainWindow::showPluginInfo()
         {
             auto t = qobject_cast<Qs::StrategyAbstract*>(plugin);
             if (t) {
-                QString info = QString("Name: %1, Build: %2").arg(metaData.value("Key").toString())
-                .arg(metaData.value("Build").toString());
+                QString info = QString("Name: %1\nBuild: %2")
+                                   .arg(metaData.value("Key").toString())
+                                   .arg(metaData.value("Build").toString());
                 textEdit->setText(info);
                 return;
             }
@@ -77,13 +75,14 @@ void MainWindow::showPluginInfo()
         {
             auto t = qobject_cast<Qs::GatewayAbstract*>(plugin);
             if (t) {
-                QString info = QString("Name: %1, Build: %2").arg(metaData.value("Key").toString())
-                .arg(metaData.value("Build").toString());
+                QString info = QString("Name: %1\nBuild: %2")
+                                   .arg(metaData.value("Key").toString())
+                                   .arg(metaData.value("Build").toString());
                 textEdit->setText(info);
             }
         }
-    }
-    else {
+        delete plugin;
+    } else {
         qCritical() << loader.errorString();
     }
 }

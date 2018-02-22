@@ -1,15 +1,16 @@
-#ifndef OZ_SINA_DATATYPE_H
-#define OZ_SINA_DATATYPE_H
+#ifndef QS_SINA_DATATYPE_H
+#define QS_SINA_DATATYPE_H
 #include "core/datatypes.h"
 
 namespace Qs {
 class SinaTickInfoPrivate;
 class SinaTickInfo : public TickInfo {
 public:
-    explicit SinaTickInfo(const QString& source);
+    explicit SinaTickInfo(const QString& source, const QUuid& gateway);
     ~SinaTickInfo();
     virtual QString ticker() const override;
     virtual QString tickerName() const override;
+    virtual QUuid gateway() const override;
     void setTicker(QString&);
     virtual double averagePrice() const override;
     virtual double lastPrice() const override;
@@ -24,7 +25,7 @@ public:
     virtual quint64 bidVolume(OrderSequenceType which) const override;
     virtual double askPrice(OrderSequenceType which) const override;
     virtual quint64 askVolume(OrderSequenceType which) const override;
-    virtual quint64 datetime() const override; // YYYYMMDD
+    virtual quint64 datetime() const override; // YYYYmmddHHMMSSsss
     //     virtual qint32 date() const override;      // YYYYMMDD
     //     virtual qint32 day() const override;
     //     virtual qint32 hour() const override;
@@ -83,4 +84,4 @@ private:
 };
 
 } // namespace Qs
-#endif // OZ_SINA_DATATYPE_H
+#endif // QS_SINA_DATATYPE_H

@@ -1,5 +1,5 @@
-#ifndef OZ_NULLTEST_H
-#define OZ_NULLTEST_H
+#ifndef QS_NULLTEST_H
+#define QS_NULLTEST_H
 #include "core/gatewayabstract.h"
 #include "core/strategyabstract.h"
 #include "core/datatypes.h"
@@ -7,6 +7,7 @@
 #include <QCoreApplication>
 #include <QThread>
 #include <QTimer>
+#include <QUuid>
 #include <QDebug>
 namespace Qs {
 const quint64 elapsed = 100000; // 100 seconds
@@ -17,6 +18,9 @@ public:
     }
     virtual QString tickerName() const {
         return QString();
+    }
+    virtual QUuid gateway() const {
+        return gatewayId;
     }
     virtual double averagePrice() const {
         return 0.0;
@@ -81,6 +85,7 @@ public:
     virtual quint64 msecsSinceEpoch() const {
         return 0;
     }
+    QUuid gatewayId;
 };
 
 class NullOrderRequest : public OrderRequest {};
@@ -92,19 +97,33 @@ public:
     }
     ~NullStrategy() {
     }
+    virtual const QUuid& uuid() {
+        if (id.isNull()) {
+            id = QUuid::createUuid();
+        }
+        return id;
+    }
     void count() {
         qCritical() << "Tick Received" << received;
     }
 
     virtual void onTick(TickInfoPointer& info) override {
         received++;
-        OrderRequestPointer request(new NullOrderRequest);
-        emit order(request);
+        static OrderRequestPointer request(new NullOrderRequest);
+        auto g = info->gateway();
+        if (g == gateway) {
+            emit order(request, gateway);
+        }
     }
     virtual void onTrade(TradeInfoPointer& info) override {
     }
     virtual void onOrder(OrderInfoPointer& info) override {
     }
+    virtual void addGateway(const QUuid& gatewayId) override {
+        gateway = gatewayId;
+    }
+    QUuid gateway; // allowed gateway
+    QUuid id;
     quint64 received;
 };
 
@@ -113,11 +132,15 @@ class NullGateway : public GatewayAbstract {
 public:
     NullGateway() {
         received = 0;
-        moveToThread(&thread);
-        thread.start();
+        toExit = false;
     }
     ~NullGateway() {
-        thread.quit();
+    }
+    virtual const QUuid& uuid() {
+        if (id.isNull()) {
+            id = QUuid::createUuid();
+        }
+        return id;
     }
     virtual void connectServer() {
     }
@@ -132,22 +155,25 @@ public:
     }
     virtual void cancelOrder(CancelOrderRequestPointer& request) {
     }
-    virtual void Subscribe(SubscribeRequestPointer& request) {
+    virtual void subscribe(SubscribeRequestPointer& request) {
     }
     Q_INVOKABLE void run() {
-        while (true) {
+        while (!toExit) {
             // FIXME
-            TickInfoPointer tick = QSharedPointer<NullTickInfo>::create();
+            static TickInfoPointer tick = QSharedPointer<NullTickInfo>::create();
+            static_cast<NullTickInfo*>(tick.data())->gatewayId = uuid();
             emit hasTick(tick);
         }
     }
     void count() {
         qCritical() << "Order Received" << received;
+        toExit = true;
     }
 
 private:
-    QThread thread;
     quint64 received;
+    QUuid id;
+    volatile bool toExit;
 };
 } // namespace Qs
-#endif // OZ_NULLTEST_H
+#endif // QS_NULLTEST_H

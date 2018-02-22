@@ -1,23 +1,23 @@
-#ifndef OZ_DEFAULTENGINE_H
-#define OZ_DEFAULTENGINE_H
+#ifndef QS_DEFAULTENGINE_H
+#define QS_DEFAULTENGINE_H
 #include <QObject>
 #include "engineabstract.h"
 
 namespace Qs {
 class DefaultEnginePrivate;
-class DefaultEngine : public QObject, public EngineAbstract {
+class DefaultEngine : public EngineAbstract {
     Q_OBJECT
 public:
     explicit DefaultEngine();
     ~DefaultEngine();
     virtual void connectServers() override;
     virtual void connectServer(const QUuid&) override;
-    virtual QUuid addStrategy(StrategyAbstract* strategy) override;
-    virtual QUuid addGateway(GatewayAbstract* gateway) override;
+    virtual void addStrategy(StrategySharedPointer& strategy) override;
+    virtual void addGateway(GatewaySharedPointer& gateway) override;
     virtual RiskManager* riskManager() const override;
     virtual PositionManager* positionManager() const override;
 
-public slots:
+    // public slots:
     virtual void onTick(TickInfoPointer& info) override;
     virtual void onTrade(TradeInfoPointer& info) override;
     virtual void onOrder(OrderInfoPointer& info) override;
@@ -35,4 +35,4 @@ private:
 };
 } // namespace Qs
 
-#endif // OZ_DEFAULTENGINE_H
+#endif // QS_DEFAULTENGINE_H

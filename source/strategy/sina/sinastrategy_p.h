@@ -3,6 +3,7 @@
 #include <QList>
 #include <QMap>
 #include <QVector>
+#include <QUuid>
 #include "core/datatypes.h"
 namespace Qs {
 const double OneTick = 0.01;
@@ -60,7 +61,8 @@ public:
 
     class SinaStrategy* const q;
     QMap<QString, SinaStrategyPart> parts;
-
+    QUuid uuid;
+    QUuid gateway;
     // TODO group by ticker
     // struct Parameter { ... };
 };

@@ -1,5 +1,5 @@
-#ifndef OZ_RECORDTICKINFO_H
-#define OZ_RECORDTICKINFO_H
+#ifndef QS_RECORDTICKINFO_H
+#define QS_RECORDTICKINFO_H
 #include <QDataStream>
 #include "core/datatypes.h"
 namespace Qs {
@@ -61,4 +61,4 @@ inline QDataStream& operator>>(QDataStream& stream, RecordTickInfo& info) {
 }
 } // namespace Qs
 
-#endif // OZ_RECORDTICKINFO_H
+#endif // QS_RECORDTICKINFO_H

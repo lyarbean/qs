@@ -21,6 +21,7 @@ public:
     double askPrice[TickInfo::TenthOrder + 1] = {0.0};
     quint64 askVolume[TickInfo::TenthOrder + 1] = {0};
     quint64 datetime; // YYYYmmddHHMMSSsss
+    QUuid gateway;
     //     qint32 date; // YYYYMMDD
     //     qint32 day;
     //     qint32 hour;
@@ -75,9 +76,10 @@ void SinaTickInfoPrivate::parse(const QString& source) {
     datetime = day.toULongLong();
 }
 
-SinaTickInfo::SinaTickInfo(const QString& source)
+SinaTickInfo::SinaTickInfo(const QString& source, const QUuid& gateway)
   : d(new SinaTickInfoPrivate) {
     d->parse(source);
+    d->gateway = gateway;
 }
 SinaTickInfo::~SinaTickInfo() {
     delete d;
@@ -91,6 +93,9 @@ QString SinaTickInfo::tickerName() const {
     return d->tickerName;
 }
 
+QUuid SinaTickInfo::gateway() const {
+    return d->gateway;
+}
 double SinaTickInfo::averagePrice() const {
     return d->averagePrice;
 }

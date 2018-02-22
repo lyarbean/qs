@@ -15,11 +15,11 @@ public:
 private:
     friend class DefaultEngine;
     DefaultEngine* const q;
-    QThread thread;
     RiskManager* riskManager;
     PositionManager* positionManager;
-    QMap<QUuid, StrategyAbstract*> strategies;
-    QMap<QUuid, GatewayAbstract*> gateways;
+
+    QMap<QUuid, StrategyWeakPointer> strategies;
+    QMap<QUuid, GatewayWeakPointer> gateways;
     QMap<QString, QVector<TickInfoPointer>> tickInfos;
     QMap<QUuid, QVector<OrderInfoPointer>> orderInfos;
     QMap<QUuid, QVector<TradeInfoPointer>> tradeInfos;

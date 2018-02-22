@@ -4,6 +4,7 @@
 #include <curl/curl.h>
 #include <QThread>
 #include <QTimer>
+#include <QUuid>
 struct MemoryStruct {
     char* memory;
     size_t size;
@@ -19,9 +20,9 @@ public:
     class SinaGateway* const q;
     MemoryStruct received;
     CURL* curlHandler;
-    QThread thread;
     QTimer* timer;
     QStringList urls;
+    QUuid uuid;
 };
 } // namespace Qs
 

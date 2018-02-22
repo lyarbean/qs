@@ -1,5 +1,5 @@
-#ifndef OZ_RISKMANAGER_H
-#define OZ_RISKMANAGER_H
+#ifndef QS_RISKMANAGER_H
+#define QS_RISKMANAGER_H
 #include "datatypes.h"
 class QUuid;
 namespace Qs {
@@ -9,4 +9,4 @@ public:
     bool check(OrderRequestPointer& request, const QUuid& gateway);
 };
 } // namespace Qs
-#endif // OZ_RISKMANAGER_H
+#endif // QS_RISKMANAGER_H

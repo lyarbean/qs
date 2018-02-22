@@ -1,6 +1,7 @@
 #include "sinagateway_p.h"
 #include "sinadatatypes.h"
 #include <cstring>
+#include <QCoreApplication>
 #include <QTextCodec>
 #include <QDebug>
 namespace Qs {
@@ -26,7 +27,6 @@ SinaGatewayPrivate::SinaGatewayPrivate(SinaGateway* q)
     curlHandler = curl_easy_init();
 }
 SinaGatewayPrivate::~SinaGatewayPrivate() {
-    thread.quit();
     curl_easy_cleanup(curlHandler);
 }
 
@@ -37,6 +37,7 @@ void SinaGatewayPrivate::fetch() {
     if (urls.isEmpty()) {
         return;
     }
+    // TODO Reuse allocated memory
     received.memory = (char*)malloc(1);
     received.size = 0;
     QString urlsString = urls.join(',');
@@ -57,7 +58,7 @@ void SinaGatewayPrivate::fetch() {
                 return;
             }
             // FIXME Use shared pointer
-            TickInfoPointer tick = QSharedPointer<SinaTickInfo>::create(datum);
+            TickInfoPointer tick = QSharedPointer<SinaTickInfo>::create(datum, q->uuid());
             emit q->hasTick(tick);
         }
     } else {
@@ -70,25 +71,15 @@ void SinaGatewayPrivate::fetch() {
 SinaGateway::SinaGateway()
   : d(new SinaGatewayPrivate(this)) {
     curl_global_init(CURL_GLOBAL_ALL);
-
     d->timer = new QTimer(this);
-    connect(d->timer, SIGNAL(timeout()), this, SLOT(pull()));
-    moveToThread(&d->thread);
-    d->thread.start();
-    d->timer->setInterval(3000);
-    QMetaObject::invokeMethod(d->timer, "start");
+    connect(d->timer, SIGNAL(timeout()), this, SLOT(pull()), Qt::QueuedConnection);
+    d->timer->start(3000);
 }
 
 SinaGateway::~SinaGateway() {
+    delete d;
 }
 
-//     virtual void connectServer() override;
-//     virtual void closeServer() override;
-//     virtual void queryAccount() override;
-//     virtual void queryPosition() override;
-//     virtual void sendOrder(OrderRequestPointer& request) override;
-//     virtual void cancelOrder(CancelOrderRequestPointer& request) override;
-//     virtual void Subscribe(SubscribeRequestPointer& request) override;
 void SinaGateway::connectServer() {
     // do nothing
 }
@@ -96,7 +87,7 @@ void SinaGateway::connectServer() {
 void SinaGateway::closeServer() {
 }
 
-void SinaGateway::Subscribe(SubscribeRequestPointer& request) {
+void SinaGateway::subscribe(SubscribeRequestPointer& request) {
     d->urls.append(request->ticker());
 }
 
@@ -110,6 +101,13 @@ void SinaGateway::queryPosition() {
 }
 
 void SinaGateway::sendOrder(OrderRequestPointer& request) {
+}
+
+const QUuid& SinaGateway::uuid() {
+    if (d->uuid.isNull()) {
+        d->uuid = QUuid::createUuid();
+    }
+    return d->uuid;
 }
 
 void Qs::SinaGateway::pull() {

@@ -3,7 +3,7 @@
 #include "recordtickinfo.h"
 #include <QMap>
 #include <QFile>
-
+#include <QUuid>
 namespace Qs {
 class EngineAbstract;
 class RecordStrategy;
@@ -17,6 +17,7 @@ public:
     QMap<QString, double> bidPrice;
     QMap<QString, double> askPrice;
     QMap<QString, RecordTickInfo> ticks;
+    QUuid uuid;
     QFile file;
     QDataStream stream;
 };

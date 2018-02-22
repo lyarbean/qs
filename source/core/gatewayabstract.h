@@ -1,5 +1,5 @@
-#ifndef OZ_GATEWAYABSTRACT_H
-#define OZ_GATEWAYABSTRACT_H
+#ifndef QS_GATEWAYABSTRACT_H
+#define QS_GATEWAYABSTRACT_H
 #include <QObject>
 #include <QtPlugin>
 #include "datatypes.h"
@@ -25,7 +25,9 @@ public:
     virtual void queryPosition() = 0;
     virtual void sendOrder(OrderRequestPointer& request) = 0;
     virtual void cancelOrder(CancelOrderRequestPointer& request) = 0;
-    virtual void Subscribe(SubscribeRequestPointer& request) = 0;
+    virtual void subscribe(SubscribeRequestPointer& request) = 0;
+    // Generate on call
+    virtual const QUuid& uuid() = 0;
 signals:
     void hasTick(TickInfoPointer& info);
     void hasTrade(TradeInfoPointer& info);
@@ -38,4 +40,4 @@ signals:
 } // namespace Qs
 Q_DECLARE_INTERFACE(Qs::GatewayAbstract, "com.investredcat.QuantitativeSystem.GatewayAbstract")
 
-#endif // OZ_GATEWAYABSTRACT_H
+#endif // QS_GATEWAYABSTRACT_H

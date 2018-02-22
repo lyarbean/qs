@@ -1,5 +1,5 @@
-#ifndef OZ_ENGINEABSTRACT_H
-#define OZ_ENGINEABSTRACT_H
+#ifndef QS_ENGINEABSTRACT_H
+#define QS_ENGINEABSTRACT_H
 #include <QUuid>
 #include <QtPlugin>
 #include "datatypes.h"
@@ -21,15 +21,21 @@ class PositionManager;
 // class CancelOrderRequest;
 // class OrderRequest;
 // class SubscribeRequest;
+typedef QSharedPointer<StrategyAbstract> StrategySharedPointer;
+typedef QWeakPointer<StrategyAbstract> StrategyWeakPointer;
+typedef QSharedPointer<GatewayAbstract> GatewaySharedPointer;
+typedef QWeakPointer<GatewayAbstract> GatewayWeakPointer;
 
-class EngineAbstract {
+class EngineAbstract : public QObject {
+    Q_OBJECT
 public:
     virtual void connectServers() = 0;
     virtual void connectServer(const QUuid&) = 0;
-    virtual QUuid addStrategy(StrategyAbstract* strategy) = 0;
-    virtual QUuid addGateway(GatewayAbstract* gateway) = 0;
+    virtual void addStrategy(StrategySharedPointer& strategy) = 0;
+    virtual void addGateway(GatewaySharedPointer& gateway) = 0;
     virtual RiskManager* riskManager() const = 0;
     virtual PositionManager* positionManager() const = 0;
+public slots:
     virtual void onTick(TickInfoPointer& info) = 0;
     virtual void onTrade(TradeInfoPointer& info) = 0;
     virtual void onOrder(OrderInfoPointer& info) = 0;
@@ -44,4 +50,4 @@ public:
 } // namespace Qs
 
 Q_DECLARE_INTERFACE(Qs::EngineAbstract, "com.investredcat.QuantitativeSystem.EngineAbstract")
-#endif // OZ_ENGINEABSTRACT_H
+#endif // QS_ENGINEABSTRACT_H

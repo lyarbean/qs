@@ -1,6 +1,7 @@
 #include <QPluginLoader>
 #include <QCoreApplication>
 #include <QDir>
+#include <QThread>
 #include <QDebug>
 
 // Import interfaces
@@ -32,6 +33,11 @@ int main(int argc, char* argv[]) {
         qCritical() << "Not strategy found";
         return 0;
     }
+    // Move to a separte thread
+    QThread strategyThread;
+    strategy->moveToThread(&strategyThread);
+    strategyThread.start();
+
     // [2] Gateway
     Qs::GatewayAbstract* gateway = nullptr;
     {
@@ -50,20 +56,27 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
+    // Move to a separte thread
+    QThread gatewayThread;
+    gateway->moveToThread(&gatewayThread);
+    gatewayThread.start();
+
     // [3] Engine
     Qs::DefaultEngine engine;
     // [4] attach gateway and strategy
-    auto gatewayId = engine.addGateway(gateway);
-    engine.addStrategy(strategy);
+    Qs::GatewaySharedPointer gatewaySharedPointer(gateway);
+    engine.addGateway(gatewaySharedPointer);
+    Qs::StrategySharedPointer strategySharedPointer(strategy);
+    engine.addStrategy(strategySharedPointer);
 
-    // [5] As it's named
+    // [5] Start
     engine.connectServers();
 
     // [6] Subscribe two tickers
     Qs::SubscribeRequestPointer r1(new Qs::SinaSubscribeRequest("sz002405"));
     Qs::SubscribeRequestPointer r2(new Qs::SinaSubscribeRequest("sz002268"));
-    engine.Subscribe(r1, gatewayId);
-    engine.Subscribe(r2, gatewayId);
+    engine.Subscribe(r1, gateway->uuid());
+    engine.Subscribe(r2, gateway->uuid());
 
     // [7] start the main event loop
     return app.exec();

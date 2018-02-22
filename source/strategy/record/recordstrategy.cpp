@@ -66,3 +66,15 @@ void RecordStrategy::onTrade(TradeInfoPointer& info) {
 }
 void RecordStrategy::onOrder(OrderInfoPointer& info) {
 }
+
+const QUuid& RecordStrategy::uuid() {
+    if (d->uuid.isNull()) {
+        d->uuid = QUuid::createUuid();
+    }
+    return d->uuid;
+}
+
+
+void RecordStrategy::addGateway(const QUuid& gatewayId) {
+    
+}

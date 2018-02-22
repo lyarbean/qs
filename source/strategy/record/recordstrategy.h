@@ -1,5 +1,5 @@
-#ifndef OZ_RECORDSTRATEGY_H
-#define OZ_RECORDSTRATEGY_H
+#ifndef QS_RECORDSTRATEGY_H
+#define QS_RECORDSTRATEGY_H
 #include "core/strategyabstract.h"
 namespace Qs {
 class RecordStrategyPrivate;
@@ -13,10 +13,12 @@ public:
     virtual void onTick(TickInfoPointer& info) override;
     virtual void onTrade(TradeInfoPointer& info) override;
     virtual void onOrder(OrderInfoPointer& info) override;
+    virtual const QUuid& uuid() override;
+    virtual void addGateway(const QUuid& gatewayId) override;
 
 private:
     RecordStrategyPrivate* const d;
 };
 } // namespace Qs
 
-#endif // OZ_RECORDSTRATEGY_H
+#endif // QS_RECORDSTRATEGY_H

@@ -257,4 +257,17 @@ void SinaStrategy::onTrade(TradeInfoPointer& info) {
 }
 void SinaStrategy::onOrder(OrderInfoPointer& info) {
 }
+
+const QUuid& SinaStrategy::uuid() {
+    if (d->uuid.isNull()) {
+        d->uuid = QUuid::createUuid();
+    }
+    return d->uuid;
+}
+
+
+void SinaStrategy::addGateway(const QUuid& gatewayId) {
+    d->gateway = gatewayId;
+}
+
 } // namespace Qs
