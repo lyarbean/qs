@@ -40,7 +40,7 @@ struct SinaStrategyPart {
     qint32 TurnoverRatioN = 100;
     qint32 TurnoverRatioM = 20;
     qint32 DownsideN = 200;
-    TickInfo::OrderSequenceType indexBid;
+    QuoteOrderType indexBid;
     bool hasP3 = false;
 };
 

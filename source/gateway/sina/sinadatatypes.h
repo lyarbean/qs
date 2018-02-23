@@ -8,10 +8,10 @@ class SinaTickInfo : public TickInfo {
 public:
     explicit SinaTickInfo(const QString& source, const QUuid& gateway);
     ~SinaTickInfo();
-    virtual QString ticker() const override;
-    virtual QString tickerName() const override;
+    virtual QByteArray ticker() const override;
+    virtual QByteArray tickerName() const override;
     virtual QUuid gateway() const override;
-    void setTicker(QString&);
+    void setTicker(QByteArray&);
     virtual double averagePrice() const override;
     virtual double lastPrice() const override;
     virtual double preClosePrice() const override;
@@ -21,10 +21,10 @@ public:
     virtual double lowPrice() const override;
     virtual quint64 volume() const override;
     virtual double turnover() const override;
-    virtual double bidPrice(OrderSequenceType which) const override;
-    virtual quint64 bidVolume(OrderSequenceType which) const override;
-    virtual double askPrice(OrderSequenceType which) const override;
-    virtual quint64 askVolume(OrderSequenceType which) const override;
+    virtual double bidPrice(QuoteOrderType which) const override;
+    virtual quint64 bidVolume(QuoteOrderType which) const override;
+    virtual double askPrice(QuoteOrderType which) const override;
+    virtual quint64 askVolume(QuoteOrderType which) const override;
     virtual quint64 datetime() const override; // YYYYmmddHHMMSSsss
     //     virtual qint32 date() const override;      // YYYYMMDD
     //     virtual qint32 day() const override;
@@ -36,51 +36,6 @@ public:
 
 private:
     SinaTickInfoPrivate* d;
-};
-
-class SinaTradeInfo {
-public:
-    virtual ~SinaTradeInfo(){};
-};
-
-class SinaOrderInfo {
-public:
-    virtual ~SinaOrderInfo(){};
-};
-
-class SinaAccountInfo {
-public:
-    virtual ~SinaAccountInfo(){};
-};
-
-class SinaPoisitionInfo {
-public:
-    virtual ~SinaPoisitionInfo(){};
-};
-
-class SinaLogInfo {
-public:
-    virtual ~SinaLogInfo(){};
-};
-
-class SinaContractInfo {
-public:
-    virtual ~SinaContractInfo(){};
-};
-
-class SinaOrderRequest {
-public:
-    virtual ~SinaOrderRequest(){};
-};
-
-class SinaSubscribeRequest : public SubscribeRequest {
-public:
-    explicit SinaSubscribeRequest(const QString& ticker);
-    virtual ~SinaSubscribeRequest();
-    QString ticker() const override;
-
-private:
-    class SinaSubscribeRequestPrivate* d;
 };
 
 } // namespace Qs

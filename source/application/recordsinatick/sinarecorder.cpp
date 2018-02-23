@@ -9,10 +9,6 @@
 #include "core/strategyabstract.h"
 #include "core/gatewayabstract.h"
 
-// Import here for SinaSubscribeRequest derived from SubscribeRequest
-#include "gateway/sina/sinadatatypes.h"
-
-
 int main(int argc, char* argv[]) {
     QCoreApplication app(argc, argv);
     // Load plugins
@@ -33,7 +29,7 @@ int main(int argc, char* argv[]) {
         qCritical() << "Not strategy found";
         return 0;
     }
-    // Move to a separte thread
+    // Moved to a separate thread
     QThread strategyThread;
     strategy->moveToThread(&strategyThread);
     strategyThread.start();
@@ -56,13 +52,14 @@ int main(int argc, char* argv[]) {
         return 0;
     }
 
-    // Move to a separte thread
+    // Moved to a separate thread
     QThread gatewayThread;
     gateway->moveToThread(&gatewayThread);
     gatewayThread.start();
 
     // [3] Engine
     Qs::DefaultEngine engine;
+
     // [4] attach gateway and strategy
     Qs::GatewaySharedPointer gatewaySharedPointer(gateway);
     engine.addGateway(gatewaySharedPointer);
@@ -73,10 +70,8 @@ int main(int argc, char* argv[]) {
     engine.connectServers();
 
     // [6] Subscribe two tickers
-    Qs::SubscribeRequestPointer r1(new Qs::SinaSubscribeRequest("sz002405"));
-    Qs::SubscribeRequestPointer r2(new Qs::SinaSubscribeRequest("sz002268"));
-    engine.Subscribe(r1, gateway->uuid());
-    engine.Subscribe(r2, gateway->uuid());
+    Qs::SubscribeRequestPointer r(new Qs::SubscribeRequest(gateway->uuid(), {"sz002405", "sz002268"}));
+    engine.Subscribe(r, gateway->uuid());
 
     // [7] start the main event loop
     return app.exec();

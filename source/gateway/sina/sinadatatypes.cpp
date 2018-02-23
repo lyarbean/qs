@@ -5,8 +5,8 @@ namespace Qs {
 class SinaTickInfoPrivate {
 public:
     void parse(const QString& source);
-    QString ticker;
-    QString tickerName;
+    QByteArray ticker;
+    QByteArray tickerName;
     double averagePrice;
     double lastPrice;
     double preClosePrice;
@@ -16,10 +16,10 @@ public:
     double lowPrice;
     quint64 volume;
     double turnover;
-    double bidPrice[TickInfo::TenthOrder + 1] = {0.0};
-    quint64 bidVolume[TickInfo::TenthOrder + 1] = {0};
-    double askPrice[TickInfo::TenthOrder + 1] = {0.0};
-    quint64 askVolume[TickInfo::TenthOrder + 1] = {0};
+    double bidPrice[TenthOrder + 1] = {0.0};
+    quint64 bidVolume[TenthOrder + 1] = {0};
+    double askPrice[TenthOrder + 1] = {0.0};
+    quint64 askVolume[TenthOrder + 1] = {0};
     quint64 datetime; // YYYYmmddHHMMSSsss
     QUuid gateway;
     //     qint32 date; // YYYYMMDD
@@ -38,8 +38,8 @@ void SinaTickInfoPrivate::parse(const QString& source) {
         return;
     }
     // 0
-    ticker = items.value(0).mid(11, 8);
-    tickerName = items.value(0).mid(21);
+    ticker = items.value(0).mid(11, 8).toUtf8();
+    tickerName = items.value(0).mid(21).toUtf8();
     // 1
     openPrice = items.value(1).toDouble();
     // 2
@@ -77,7 +77,7 @@ void SinaTickInfoPrivate::parse(const QString& source) {
 }
 
 SinaTickInfo::SinaTickInfo(const QString& source, const QUuid& gateway)
-  : d(new SinaTickInfoPrivate) {
+  : TickInfo(gateway), d(new SinaTickInfoPrivate) {
     d->parse(source);
     d->gateway = gateway;
 }
@@ -85,11 +85,11 @@ SinaTickInfo::~SinaTickInfo() {
     delete d;
 }
 
-QString SinaTickInfo::ticker() const {
+QByteArray SinaTickInfo::ticker() const {
     return d->ticker;
 }
 
-QString SinaTickInfo::tickerName() const {
+QByteArray SinaTickInfo::tickerName() const {
     return d->tickerName;
 }
 
@@ -132,19 +132,19 @@ double SinaTickInfo::turnover() const {
     return d->turnover;
 }
 
-double SinaTickInfo::bidPrice(OrderSequenceType which) const {
+double SinaTickInfo::bidPrice(QuoteOrderType which) const {
     return d->bidPrice[which];
 }
 
-quint64 SinaTickInfo::bidVolume(OrderSequenceType which) const {
+quint64 SinaTickInfo::bidVolume(QuoteOrderType which) const {
     return d->bidVolume[which];
 }
 
-double SinaTickInfo::askPrice(OrderSequenceType which) const {
+double SinaTickInfo::askPrice(QuoteOrderType which) const {
     return d->askPrice[which];
 }
 
-quint64 SinaTickInfo::askVolume(OrderSequenceType which) const {
+quint64 SinaTickInfo::askVolume(QuoteOrderType which) const {
     return d->askVolume[which];
 }
 
@@ -153,21 +153,4 @@ quint64 SinaTickInfo::datetime() const {
     return d->datetime;
 } // YYYYMMDD
 
-class SinaSubscribeRequestPrivate {
-public:
-    QString ticker;
-};
-
-SinaSubscribeRequest::SinaSubscribeRequest(const QString& ticker)
-  : d(new SinaSubscribeRequestPrivate) {
-    d->ticker = ticker;
-}
-
-SinaSubscribeRequest::~SinaSubscribeRequest() {
-    delete d;
-}
-
-QString SinaSubscribeRequest::ticker() const {
-    return d->ticker;
-}
 } // namespace Qs

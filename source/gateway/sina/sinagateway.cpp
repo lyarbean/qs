@@ -80,15 +80,15 @@ SinaGateway::~SinaGateway() {
     delete d;
 }
 
-void SinaGateway::connectServer() {
+void SinaGateway::connectToServer() {
     // do nothing
 }
 
-void SinaGateway::closeServer() {
+void SinaGateway::disconnectFromServer() {
 }
 
 void SinaGateway::subscribe(SubscribeRequestPointer& request) {
-    d->urls.append(request->ticker());
+    d->urls.append(request->tickerList());
 }
 
 void SinaGateway::cancelOrder(CancelOrderRequestPointer& request) {

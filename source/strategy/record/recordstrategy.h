@@ -14,7 +14,7 @@ public:
     virtual void onTrade(TradeInfoPointer& info) override;
     virtual void onOrder(OrderInfoPointer& info) override;
     virtual const QUuid& uuid() override;
-    virtual void addGateway(const QUuid& gatewayId) override;
+    virtual void acceptGateway(const QUuid& gatewayId) override;
 
 private:
     RecordStrategyPrivate* const d;

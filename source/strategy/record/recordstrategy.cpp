@@ -23,11 +23,11 @@ RecordStrategy::RecordStrategy()
 void RecordStrategy::onTick(TickInfoPointer& info) {
     //     auto ask = d->askPrice[info->ticker()];
     //     auto bid = d->bidPrice[info->ticker()];
-    //     if (ask != info->askPrice(TickInfo::FirstOrder) || bid != info->bidPrice(TickInfo::FirstOrder)) {
-    //         qCritical() previous->ticker() previous->tickerName() previous->bidPrice(TickInfo::FirstOrder)
-    //         previous->askPrice(TickInfo::FirstOrder);
-    //         d->askPrice[info->ticker()] = info->askPrice(TickInfo::FirstOrder);
-    //         d->bidPrice[info->ticker()] = info->bidPrice(TickInfo::FirstOrder);
+    //     if (ask != info->askPrice(FirstOrder) || bid != info->bidPrice(FirstOrder)) {
+    //         qCritical() previous->ticker() previous->tickerName() previous->bidPrice(FirstOrder)
+    //         previous->askPrice(FirstOrder);
+    //         d->askPrice[info->ticker()] = info->askPrice(FirstOrder);
+    //         d->bidPrice[info->ticker()] = info->bidPrice(FirstOrder);
     //     }
     if (!d->stream.device()) {
         return;
@@ -46,17 +46,17 @@ void RecordStrategy::onTick(TickInfoPointer& info) {
     previous.lowPrice = info->lowPrice();
     previous.volume = info->volume();
     previous.turnover = info->turnover();
-    for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
-        previous.bidPrice[i] = info->bidPrice(static_cast<TickInfo::OrderSequenceType>(i));
+    for (int i = FirstOrder; i <= TenthOrder; ++i) {
+        previous.bidPrice[i] = info->bidPrice(static_cast<QuoteOrderType>(i));
     }
-    for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
-        previous.bidVolume[i] = info->bidVolume(static_cast<TickInfo::OrderSequenceType>(i));
+    for (int i = FirstOrder; i <= TenthOrder; ++i) {
+        previous.bidVolume[i] = info->bidVolume(static_cast<QuoteOrderType>(i));
     }
-    for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
-        previous.askPrice[i] = info->askPrice(static_cast<TickInfo::OrderSequenceType>(i));
+    for (int i = FirstOrder; i <= TenthOrder; ++i) {
+        previous.askPrice[i] = info->askPrice(static_cast<QuoteOrderType>(i));
     }
-    for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
-        previous.askVolume[i] = info->askVolume(static_cast<TickInfo::OrderSequenceType>(i));
+    for (int i = FirstOrder; i <= TenthOrder; ++i) {
+        previous.askVolume[i] = info->askVolume(static_cast<QuoteOrderType>(i));
     }
     previous.datetime = info->datetime(); // YYYYmmddHHMMSSsss
     d->stream << previous;
@@ -75,6 +75,6 @@ const QUuid& RecordStrategy::uuid() {
 }
 
 
-void RecordStrategy::addGateway(const QUuid& gatewayId) {
+void RecordStrategy::acceptGateway(const QUuid& gatewayId) {
     
 }

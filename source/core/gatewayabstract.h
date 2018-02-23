@@ -4,23 +4,11 @@
 #include <QtPlugin>
 #include "datatypes.h"
 namespace Qs {
-// class CancelOrderRequest;
-// class OrderRequest;
-// class SubscribeRequest;
-//
-// class AccountInfoPointer;
-// class ContractInfoPointer;
-// class LogInfoPointer;
-// class OrderInfoPointer;
-// class PoisitionInfoPointer;
-// class TickInfoPointer;
-// class TradeInfoPointer;
-
 class GatewayAbstract : public QObject {
     Q_OBJECT
 public:
-    virtual void connectServer() = 0;
-    virtual void closeServer() = 0;
+    virtual void connectToServer() = 0;
+    virtual void disconnectFromServer() = 0;
     virtual void queryAccount() = 0;
     virtual void queryPosition() = 0;
     virtual void sendOrder(OrderRequestPointer& request) = 0;

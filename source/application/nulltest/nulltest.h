@@ -13,11 +13,14 @@ namespace Qs {
 const quint64 elapsed = 100000; // 100 seconds
 class NullTickInfo : public TickInfo {
 public:
-    virtual QString ticker() const {
-        return QString("null");
+    explicit NullTickInfo(const QUuid& gateway) : TickInfo(gateway) {
+        gatewayId = gateway;
     }
-    virtual QString tickerName() const {
-        return QString();
+    virtual QByteArray ticker() const {
+        return QByteArray("null");
+    }
+    virtual QByteArray tickerName() const {
+        return QByteArray("null");
     }
     virtual QUuid gateway() const {
         return gatewayId;
@@ -49,16 +52,16 @@ public:
     virtual double turnover() const {
         return 0.0;
     }
-    virtual double bidPrice(OrderSequenceType which) const {
+    virtual double bidPrice(QuoteOrderType which) const {
         return 0.0;
     }
-    virtual quint64 bidVolume(OrderSequenceType which) const {
+    virtual quint64 bidVolume(QuoteOrderType which) const {
         return 0;
     }
-    virtual double askPrice(OrderSequenceType which) const {
+    virtual double askPrice(QuoteOrderType which) const {
         return 0.0;
     }
-    virtual quint64 askVolume(OrderSequenceType which) const {
+    virtual quint64 askVolume(QuoteOrderType which) const {
         return 0;
     }
     virtual quint64 datetime() const {
@@ -88,7 +91,6 @@ public:
     QUuid gatewayId;
 };
 
-class NullOrderRequest : public OrderRequest {};
 
 class NullStrategy : public StrategyAbstract {
 public:
@@ -109,7 +111,7 @@ public:
 
     virtual void onTick(TickInfoPointer& info) override {
         received++;
-        static OrderRequestPointer request(new NullOrderRequest);
+        static OrderRequestPointer request(new OrderRequest(gateway));
         auto g = info->gateway();
         if (g == gateway) {
             emit order(request, gateway);
@@ -119,7 +121,7 @@ public:
     }
     virtual void onOrder(OrderInfoPointer& info) override {
     }
-    virtual void addGateway(const QUuid& gatewayId) override {
+    virtual void acceptGateway(const QUuid& gatewayId) override {
         gateway = gatewayId;
     }
     QUuid gateway; // allowed gateway
@@ -142,9 +144,9 @@ public:
         }
         return id;
     }
-    virtual void connectServer() {
+    virtual void connectToServer() {
     }
-    virtual void closeServer() {
+    virtual void disconnectFromServer() {
     }
     virtual void queryAccount() {
     }
@@ -158,16 +160,17 @@ public:
     virtual void subscribe(SubscribeRequestPointer& request) {
     }
     Q_INVOKABLE void run() {
+        static TickInfoPointer tick = QSharedPointer<NullTickInfo>::create(uuid());
         while (!toExit) {
-            // FIXME
-            static TickInfoPointer tick = QSharedPointer<NullTickInfo>::create();
-            static_cast<NullTickInfo*>(tick.data())->gatewayId = uuid();
             emit hasTick(tick);
         }
     }
+    void stop() {
+        toExit = true;
+    }
+
     void count() {
         qCritical() << "Order Received" << received;
-        toExit = true;
     }
 
 private:

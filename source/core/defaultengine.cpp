@@ -25,7 +25,7 @@ DefaultEngine::~DefaultEngine() {
 
 void DefaultEngine::connectServers() {
     for (auto g : d->gateways)
-        g.data()->connectServer();
+        g.data()->connectToServer();
 }
 
 void DefaultEngine::connectServer(const QUuid& uuid) {
@@ -35,7 +35,7 @@ void DefaultEngine::connectServer(const QUuid& uuid) {
     }
     auto ref = g.value().lock();
     if (ref) {
-        ref->connectServer();
+        ref->connectToServer();
     }
 }
 
@@ -81,7 +81,7 @@ void DefaultEngine::onTrade(TradeInfoPointer& info) {
             ref->onTrade(info);
         }
     }
-    d->tradeInfos[info->ticker()].append(info);
+    //  d->tradeInfos[info->ticker()].append(info);
 }
 
 void DefaultEngine::onOrder(OrderInfoPointer& info) {
@@ -91,7 +91,7 @@ void DefaultEngine::onOrder(OrderInfoPointer& info) {
             ref->onOrder(info);
         }
     }
-    d->orderInfos[info->ticker()].append(info);
+    //  d->orderInfos[info->ticker()].append(info);
 }
 
 void DefaultEngine::onPoisition(PoisitionInfoPointer& info) {
@@ -112,7 +112,7 @@ void DefaultEngine::sendOrder(OrderRequestPointer& request, const QUuid& gateway
     if (g == d->gateways.end()) {
         // TODO
         // request->status = NoGateway;
-        d->abandonedOrderRequests[gateway].append(request);
+        //         d->abandonedOrderRequests[gateway].append(request);
         return;
     }
     if (!d->riskManager->check(request, gateway)) {
@@ -148,16 +148,16 @@ void DefaultEngine::cancelOrder(CancelOrderRequestPointer& request, const QUuid&
     if (g == d->gateways.end()) {
         // TODO
         // request->status = NoGateway;
-        d->abandonedCancelOrderRequests[gateway].append(request);
+        //         d->abandonedCancelOrderRequests[gateway].append(request);
         return;
     }
     auto ref = g.value().lock();
     if (ref) {
         ref->cancelOrder(request);
-        d->cancelOrderRequests[gateway].append(request);
+        //         d->cancelOrderRequests[gateway].append(request);
     } else {
         // request->status = GatewayIsGone;
-        d->abandonedCancelOrderRequests[gateway].append(request);
+        //         d->abandonedCancelOrderRequests[gateway].append(request);
     }
 }
 
@@ -180,9 +180,9 @@ void DefaultEngine::Subscribe(SubscribeRequestPointer& request, const QUuid& gat
     auto ref = g.value().lock();
     if (ref) {
         ref->subscribe(request);
-        d->subscribeRequests[gateway].append(request);
+        //         d->subscribeRequests[gateway].append(request);
     } else {
         // request->status = GatewayIsGone;
-        d->abandonedSubscribeRequests[gateway].append(request);
+        //         d->abandonedSubscribeRequests[gateway].append(request);
     }
 }

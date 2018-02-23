@@ -1,33 +1,115 @@
 #ifndef QS_DATATYPE_H
 #define QS_DATATYPE_H
-#include <QString>
+#include <QByteArray>
 #include <QUuid>
 #include <QSharedPointer>
 
 namespace Qs {
+
+enum QuoteOrderType {
+    InvalidOrder = -1,
+    FirstOrder = 0,
+    SecondOrder,
+    ThirdOrder,
+    FourthOrder,
+    FifthOrder,
+    SixthOrder,
+    SeventhOrder,
+    EighthOrder,
+    NinethOrder,
+    TenthOrder
+    // TODO More ?
+};
+
+enum RequestStatus {
+    InitialRequest = 0,
+    NoSuchGateway,
+    GatewayIsGone,
+    AcceptedOnRiskControl,
+    RejectedOnRiskControl,
+};
+
+enum TradeSideType {
+    BuySide = 0,
+    SellSide,
+    BuyOpenSide,
+    SellOpenSide,
+    BuyCloseSide,
+    SellCloseSide,
+    PurchaseSide,
+    RedemptionSide,
+    SplitSide,
+    MergeSide,
+};
+
+enum TradePriceKind {
+    LimitPriceKind = 0,
+    BestOrCancelPriceKind,
+    Best5OrLimitPriceKind,
+    Best5ORCancelPriceKind,
+    AllOrCancelPriceKind,
+    ForwardBestPriceKind,
+    ReverseBestLimitPriceKind,
+    InvalidPriceKind,
+};
+
+// TODO
+enum TradeBusinessType {
+    CashBusiness = 0,
+    IposBusiness,
+};
+
+enum TradeType {
+    CommonTrade = 0,
+    OptionsExecutionTrade,
+    OtcTrade,
+    EtpDerivedTrade,
+    CombinationDerivedTrade,
+    EtfPurchase,
+    EtfRedem
+};
+
+enum OrderTradeStatusType {
+    InitialOrder = 0,
+    AllTradedOrder,
+    PartialTradedQueueing,
+    PartialTradedNotQueueing,
+    NotTradedQueueing,
+    CanceledOrder,
+    RejectedOrder,
+};
+
+enum OrderSubmitStatusType {
+    OrderInsertSubmitted = 0,
+    OrderInsertAccepted,
+    OrderInsertRejected,
+    OrderCancelSubmitted,
+    OrderCancelAccepted,
+    OrderCancelRejected,
+};
+
+enum OrderKind {
+    NormalOrder = 0,
+    DerivedFromQuoteOrder,
+    DerivedFromCombinationOrder,
+    CombinationOrder,
+    ConditionalOrder,
+    SwapOrder,
+};
+
 /**
- * @brief TickInfo represents market or option tick data.
+ * @brief TickInfo represents market/option/etf tick data.
  *
  */
 class TickInfo {
 public:
-    enum OrderSequenceType {
-        InvalidOrder = -1,
-        FirstOrder = 0,
-        SecondOrder,
-        ThirdOrder,
-        FourthOrder,
-        FifthOrder,
-        SixthOrder,
-        SeventhOrder,
-        EighthOrder,
-        NinethOrder,
-        TenthOrder
-    };
+    // A gateway is enforced
+    explicit TickInfo(const QUuid& gateway) {
+    }
     virtual ~TickInfo() {
     }
-    virtual QString ticker() const = 0;
-    virtual QString tickerName() const = 0;
+    virtual QByteArray ticker() const = 0;
+    virtual QByteArray tickerName() const = 0;
     virtual QUuid gateway() const = 0;
     // Stock
     virtual double lastPrice() const {
@@ -89,16 +171,16 @@ public:
     } // YYYYmmddHHMMSSsss
 
     // orders
-    virtual double bidPrice(OrderSequenceType which) const {
+    virtual double bidPrice(QuoteOrderType which) const {
         return 0;
     }
-    virtual quint64 bidVolume(OrderSequenceType which) const {
+    virtual quint64 bidVolume(QuoteOrderType which) const {
         return 0;
     }
-    virtual double askPrice(OrderSequenceType which) const {
+    virtual double askPrice(QuoteOrderType which) const {
         return 0;
     }
-    virtual quint64 askVolume(OrderSequenceType which) const {
+    virtual quint64 askVolume(QuoteOrderType which) const {
         return 0;
     }
 
@@ -210,8 +292,20 @@ typedef QSharedPointer<TickInfo> TickInfoPointer;
 
 class TradeInfo {
 public:
+    // A gateway is enforced
+    explicit TradeInfo(const QUuid& gateway) {
+    }
     virtual ~TradeInfo(){};
-    virtual QString ticker() const = 0;
+    virtual QUuid gateway() const = 0;
+    virtual QByteArray ticker() const = 0;
+    virtual double price() const = 0;
+    virtual quint64 tradedVolume() const = 0;
+    virtual double tradedAmount() const = 0; // price * tradedVolume
+    virtual quint64 tradedTime() const = 0;
+    virtual quint64 reportIndex() const = 0;
+    virtual TradeType tradeType() const = 0;
+    virtual TradeSideType tradeSideType() const = 0;
+    virtual TradeBusinessType tradeBusinessType() const = 0;
 };
 
 typedef QSharedPointer<TradeInfo> TradeInfoPointer;
@@ -219,10 +313,33 @@ typedef QSharedPointer<TradeInfo> TradeInfoPointer;
 class OrderInfo {
 public:
     virtual ~OrderInfo(){};
-    virtual QString ticker() const = 0;
+    virtual QByteArray ticker() const = 0;
+    virtual double price() const = 0;
+    virtual quint64 volume() const = 0;
+    // YYYYMMDDHHMMSSzzz
+    virtual quint64 insertTime() const = 0;
+    virtual quint64 updateTime() const = 0;
+    virtual quint64 cancelTime() const = 0;
+    virtual double tradedAmount() const = 0;
+    virtual TradeSideType tradeSideType() const = 0;
+    virtual TradeBusinessType tradeBusinessType() const = 0;
+    virtual TradePriceKind kind() const = 0;
+    virtual OrderTradeStatusType tradeStatus() const = 0;
+    virtual OrderSubmitStatusType submitStatus() const = 0;
 };
 
 typedef QSharedPointer<OrderInfo> OrderInfoPointer;
+
+// Gateway should keep a table mapping from internal id to a uuid.
+class OrderCancelInfo final {
+public:
+    const QUuid& id() const {
+        return uuid;
+    }
+
+private:
+    QUuid uuid;
+};
 
 class AccountInfo {
 public:
@@ -252,25 +369,63 @@ public:
 
 typedef QSharedPointer<ContractInfo> ContractInfoPointer;
 
-// TODO Requests are issue by engines, we may fix their structures
-class OrderRequest {
+class OrderRequest final {
 public:
-    virtual ~OrderRequest(){};
+    OrderRequest(const QUuid& gateway) {
+        status = InitialRequest;
+        id = QUuid::createUuid();
+        gatewayId = gatewayId;
+    }
+    RequestStatus status;
+    QUuid id;
+    QUuid gatewayId;
+    QByteArray ticker;
+    double price;
+    quint32 volume;
+    TradeSideType side;
+    TradePriceKind kind;
+    TradeBusinessType bussiness;
 };
 
 typedef QSharedPointer<OrderRequest> OrderRequestPointer;
 
-class CancelOrderRequest {
+class CancelOrderRequest final {
 public:
-    virtual ~CancelOrderRequest(){};
+    explicit CancelOrderRequest(const QUuid& gateway, const QUuid& order) {
+        status = InitialRequest;
+        id = QUuid::createUuid();
+        orderId = order;
+        gatewayId = gateway;
+    }
+    RequestStatus status;
+    QUuid id;
+    QUuid orderId;
+    QUuid gatewayId;
 };
 
 typedef QSharedPointer<CancelOrderRequest> CancelOrderRequestPointer;
 
-class SubscribeRequest {
+class SubscribeRequest final {
 public:
-    virtual ~SubscribeRequest(){};
-    virtual QString ticker() const = 0;
+    explicit SubscribeRequest(const QUuid& gateway, const QByteArrayList& tickers) {
+        status = InitialRequest;
+        id = QUuid::createUuid();
+        gatewayId = gatewayId;
+        this->tickers = tickers;
+    }
+    QByteArrayList tickerList() const {
+        return tickers;
+    }
+    // separator = [',', '\n',...]
+    QByteArray tickersAsByteArray(const QByteArray& separator) const {
+        return tickers.join(separator);
+    }
+
+private:
+    RequestStatus status;
+    QUuid id;
+    QUuid gatewayId;
+    QByteArrayList tickers;
 };
 
 typedef QSharedPointer<SubscribeRequest> SubscribeRequestPointer;

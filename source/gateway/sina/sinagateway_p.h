@@ -21,7 +21,7 @@ public:
     MemoryStruct received;
     CURL* curlHandler;
     QTimer* timer;
-    QStringList urls;
+    QByteArrayList urls;
     QUuid uuid;
 };
 } // namespace Qs

@@ -39,14 +39,8 @@ inline bool greaterThanOrEqualTo(const double& lhs, const double& rhs) {
     return !isLessThan(lhs, rhs);
 }
 
-// TODO ? use this
-// Return part of datetime, which is in form of YYYYMMDDSSSSSssssss
-//                                              ----++--+++++------
-//                                               4  2 2   5    6
-//
-
 // XTP format
-// YYYYMMDDHHmmSSsss
+// yyyyMMddHHmmsszzz
 inline qint32 yearOf(quint64 datetime) {
     return datetime / static_cast<quint64>(1E13);
 }

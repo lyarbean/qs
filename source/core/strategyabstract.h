@@ -14,7 +14,7 @@ public:
     // Generate on call
     virtual const QUuid& uuid() = 0;
     // Add gateway to whitelist, drop ticks if not matched
-    virtual void addGateway(const QUuid& uuid) = 0;
+    virtual void acceptGateway(const QUuid& uuid) = 0;
 signals:
     void order(OrderRequestPointer& request, QUuid& gatewayId);
     void cancelOrder(CancelOrderRequestPointer& request, QUuid& gatewayId);

@@ -1,8 +1,7 @@
 #include "QDebug"
 #include <QFile>
 #include "strategy/record/recordtickinfo.h"
-using Qs::RecordTickInfo;
-using Qs::TickInfo;
+using namespace Qs;
 
 int main(int argc, char* argv[]) {
     QFile file("/tmp/sina.data");
@@ -16,8 +15,8 @@ int main(int argc, char* argv[]) {
                   " %40 %41 %42 %43 %44 %45 %46 %47 %48 %49 %40 %41 %42 %43 %44 %45 %46 %47 %48 %49"
                   " %50 %51 %52");
         // s = s.arg(info.magic)
-        s = s.arg(info.ticker)
-                .arg(info.tickerName)
+        s = s.arg(QString(info.ticker))
+                .arg(QString(info.tickerName))
                 .arg(info.averagePrice)
                 .arg(info.lastPrice)
                 .arg(info.preClosePrice)
@@ -27,16 +26,16 @@ int main(int argc, char* argv[]) {
                 .arg(info.lowPrice)
                 .arg(info.volume)
                 .arg(info.turnover);
-        for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
+        for (int i = FirstOrder; i <= TenthOrder; ++i) {
             s = s.arg(info.bidPrice[i]);
         }
-        for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
+        for (int i = FirstOrder; i <= TenthOrder; ++i) {
             s = s.arg(info.bidVolume[i]);
         }
-        for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
+        for (int i = FirstOrder; i <= TenthOrder; ++i) {
             s = s.arg(info.askPrice[i]);
         }
-        for (int i = TickInfo::FirstOrder; i <= TickInfo::TenthOrder; ++i) {
+        for (int i = FirstOrder; i <= TenthOrder; ++i) {
             s = s.arg(info.askVolume[i]);
         }
         s = s.arg(info.datetime); // YYYYmmddHHMMSSsss

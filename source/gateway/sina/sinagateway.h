@@ -2,11 +2,6 @@
 #define QS_SINAGATEWAY_H
 #include "core/gatewayabstract.h"
 namespace Qs {
-
-// class CancelOrderRequest;
-// class OrderRequest;
-// class SubscribeRequest;
-
 class SinaGateway : public GatewayAbstract {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.investredcat.QuantitativeSystem.GatewayAbstract" FILE "sinagateway.json")
@@ -14,8 +9,8 @@ class SinaGateway : public GatewayAbstract {
 public:
     SinaGateway();
     ~SinaGateway();
-    virtual void connectServer() override;
-    virtual void closeServer() override;
+    virtual void connectToServer() override;
+    virtual void disconnectFromServer() override;
     virtual void queryAccount() override;
     virtual void queryPosition() override;
     virtual void sendOrder(OrderRequestPointer& request) override;

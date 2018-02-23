@@ -6,7 +6,7 @@
 #include "utils/utils.h"
 namespace Qs {
 static double getP(Qs::TickInfoPointer& tick) {
-    if (tick->bidVolume(Qs::TickInfo::FirstOrder) == 0 || tick->askVolume(Qs::TickInfo::FirstOrder) == 0) {
+    if (tick->bidVolume(FirstOrder) == 0 || tick->askVolume(FirstOrder) == 0) {
         throw std::logic_error("Zero Volume");
     }
 
@@ -17,22 +17,22 @@ static double getP(Qs::TickInfoPointer& tick) {
                                          // CALCULATE_BUY:
     double buyWeight = 0.0;
     for (int i = 0; i < 5; ++i) {
-        buyWeight += 1.0 / (tick->bidPrice(static_cast<Qs::TickInfo::OrderSequenceType>(i)) - close);
+        buyWeight += 1.0 / (tick->bidPrice(static_cast<QuoteOrderType>(i)) - close);
     }
     for (int i = 0; i < 5; ++i) {
-        buy += (tick->bidVolume(static_cast<Qs::TickInfo::OrderSequenceType>(i)) /
-                (tick->bidPrice(static_cast<Qs::TickInfo::OrderSequenceType>(i)) - close));
+        buy += (tick->bidVolume(static_cast<QuoteOrderType>(i)) /
+                (tick->bidPrice(static_cast<QuoteOrderType>(i)) - close));
     }
     buy /= buyWeight;
 
     // CALCULATE_SELL:
     double sellWeight = 0.0;
     for (int i = 0; i < 5; ++i) {
-        buyWeight += 1.0 / (tick->askPrice(static_cast<Qs::TickInfo::OrderSequenceType>(i)) - close);
+        buyWeight += 1.0 / (tick->askPrice(static_cast<QuoteOrderType>(i)) - close);
     }
     for (int i = 0; i < 5; ++i) {
-        buy += (tick->askVolume(static_cast<Qs::TickInfo::OrderSequenceType>(i)) /
-                (tick->askPrice(static_cast<Qs::TickInfo::OrderSequenceType>(i)) - close));
+        buy += (tick->askVolume(static_cast<QuoteOrderType>(i)) /
+                (tick->askPrice(static_cast<QuoteOrderType>(i)) - close));
     }
     sell /= sellWeight;
     return log(buy) - log(sell);
@@ -146,7 +146,7 @@ void SinaStrategyPrivate::prepareToExit(const SinaStrategyPart& part, TickInfoPo
 }
 
 void SinaStrategyPrivate::cancelBidOrders(const SinaStrategyPart& part, TickInfoPointer& info) {
-    if (part.indexBid != TickInfo::InvalidOrder) {
+    if (part.indexBid != InvalidOrder) {
         double p1 = info->bidPrice(part.indexBid);
         bool a1 = lessThan(part.p, part.THLongCancel);
         bool a2 = lessThan(part.averageBSDiff, part.THCancelBSDiff);
@@ -167,11 +167,11 @@ void SinaStrategyPrivate::applyAskOrders(const SinaStrategyPart& part, TickInfoP
 void SinaStrategyPrivate::applyBidOrders(const SinaStrategyPart& part, TickInfoPointer& info) {
     // TODO if not isBuyHoldAvailable return
     auto ticker = info->ticker();
-    if (part.indexBid != TickInfo::InvalidOrder
+    if (part.indexBid != InvalidOrder
         // && period_ == InTrade
         && lessThan(downside(part.DownsideN, ticker), part.THDownside) &&
         greaterThan(turnoverRatio(part.TurnoverRatioN, part.TurnoverRatioM, ticker), part.THTurnoverRatio) &&
-        greaterThan((info->bidPrice(TickInfo::FirstOrder) - info->openPrice()) / info->openPrice(), -0.08)) {
+        greaterThan((info->bidPrice(FirstOrder) - info->openPrice()) / info->openPrice(), -0.08)) {
         double p1 = info->bidPrice(part.indexBid);
         if (lessThan(part.THLongOpen, part.p) && greaterThanOrEqualTo(part.averageBSDiff, part.THBSDiff) &&
             greaterThanOrEqualTo((part.p2 - p1 - OneTick * 2) / part.average, part.THOpenExpProfit)) {
@@ -189,7 +189,7 @@ void SinaStrategy::onTick(TickInfoPointer& info) {
     // //     qCritical() << "..";
     QString ticker = info->ticker();
     //     if (ticker == "sz002405") {
-    //         auto price = info->bidPrice(TickInfo::FirstOrder);
+    //         auto price = info->bidPrice(FirstOrder);
     //         if (price < 26.398 * 0.92) {
     //             qCritical() << "Warning: " << info->tickerName() << "Low price: " << price;
     //         } else if (price > 26.398 * 1.06) {
@@ -197,7 +197,7 @@ void SinaStrategy::onTick(TickInfoPointer& info) {
     //         }
     //     }
     //     if (ticker == "sz002268") { // 23.362
-    //         auto price = info->bidPrice(TickInfo::FirstOrder);
+    //         auto price = info->bidPrice(FirstOrder);
     //         if (price < 23.362 * 0.92) {
     //             qCritical() << "Warning: " << info->tickerName() << "Low price: " << price;
     //         } else if (price > 23.362 * 1.06) {
@@ -207,7 +207,7 @@ void SinaStrategy::onTick(TickInfoPointer& info) {
     auto& part = d->parts[ticker];
     QVector<SubTickInfo>& subTickInfos = part.subTickInfos;
     subTickInfos.append(
-        {info->turnover(), info->volume(), info->askPrice(TickInfo::FirstOrder), info->bidPrice(TickInfo::FirstOrder)});
+        {info->turnover(), info->volume(), info->askPrice(FirstOrder), info->bidPrice(FirstOrder)});
     quint64 bid, ask;
     d->getVolumes(ask, bid, ticker);
     auto& currentTick = subTickInfos.last();
@@ -218,18 +218,18 @@ void SinaStrategy::onTick(TickInfoPointer& info) {
         return;
     }
 
-    part.indexBid = TickInfo::InvalidOrder;
-    TickInfo::OrderSequenceType indexAsk = TickInfo::FifthOrder; // Ask5
+    part.indexBid = InvalidOrder;
+    QuoteOrderType indexAsk = FifthOrder; // Ask5
     part.hasP3 = false;
     for (size_t i = 0; i < 5; ++i) {
-        if (info->bidVolume(TickInfo::FirstOrder) >= part.bigVolume) {
-            part.indexBid = static_cast<TickInfo::OrderSequenceType>(i);
+        if (info->bidVolume(FirstOrder) >= part.bigVolume) {
+            part.indexBid = static_cast<QuoteOrderType>(i);
             break;
         }
     }
     for (size_t i = 0; i < 5; ++i) {
-        if (info->askVolume(TickInfo::FirstOrder) >= part.bigVolume) {
-            indexAsk = static_cast<TickInfo::OrderSequenceType>(i);
+        if (info->askVolume(FirstOrder) >= part.bigVolume) {
+            indexAsk = static_cast<QuoteOrderType>(i);
             ;
             part.hasP3 = true;
             break;
@@ -266,7 +266,7 @@ const QUuid& SinaStrategy::uuid() {
 }
 
 
-void SinaStrategy::addGateway(const QUuid& gatewayId) {
+void SinaStrategy::acceptGateway(const QUuid& gatewayId) {
     d->gateway = gatewayId;
 }
 
