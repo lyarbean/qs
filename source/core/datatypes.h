@@ -27,6 +27,9 @@ enum RequestStatus {
     GatewayIsGone,
     AcceptedOnRiskControl,
     RejectedOnRiskControl,
+    InvalidTicker,
+    InvalidSide,
+    Inserted,
 };
 
 enum TradeSideType {
@@ -412,6 +415,9 @@ public:
         id = QUuid::createUuid();
         gatewayId = gatewayId;
         this->tickers = tickers;
+    }
+    int count() const {
+        return tickers.count();
     }
     QByteArrayList tickerList() const {
         return tickers;
