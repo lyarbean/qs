@@ -74,7 +74,5 @@ const QUuid& RecordStrategy::uuid() {
     return d->uuid;
 }
 
-
 void RecordStrategy::acceptGateway(const QUuid& gatewayId) {
-    
 }

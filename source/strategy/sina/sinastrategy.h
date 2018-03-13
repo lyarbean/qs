@@ -16,6 +16,7 @@ public:
     virtual void onOrder(OrderInfoPointer& info) override;
     virtual const QUuid& uuid() override;
     virtual void acceptGateway(const QUuid& gatewayId) override;
+
 private:
     class SinaStrategyPrivate* const d;
 };

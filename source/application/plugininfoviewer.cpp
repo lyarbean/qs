@@ -55,7 +55,9 @@ void MainWindow::connectSinalSlot() {
 
 void MainWindow::showPluginInfo() {
     auto fileName = QFileDialog::getOpenFileName(this, tr("Open Plugin"), QDir::currentPath(), tr("Plugins (*.so)"));
-
+    if (fileName.isEmpty()) {
+        return;
+    }
     QPluginLoader loader(fileName);
     QObject* plugin = loader.instance();
     qCritical() << (quint64)plugin << fileName;

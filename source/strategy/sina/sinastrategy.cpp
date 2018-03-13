@@ -64,18 +64,18 @@ double SinaStrategyPrivate::averageBidAskDiff(quint32 count, const QString& tick
         throw std::logic_error("averageBidAskDiff: No adequate ticks");
     }
     double bid = 0.0, ask = 0.0;
-/**
-    auto iter = subTickInfo.rbegin();
-    for (size_t p = 0; p < count; ++p) {
-        bid += (*iter).lastBidVolume;
-        ask += (*iter).lastAskVolume;
-        ++iter;
-    }
-**/
+    /**
+        auto iter = subTickInfo.rbegin();
+        for (size_t p = 0; p < count; ++p) {
+            bid += (*iter).lastBidVolume;
+            ask += (*iter).lastAskVolume;
+            ++iter;
+        }
+    **/
     int c = subTickInfo.count();
     for (size_t p = 0; p < count; ++p) {
-        bid += subTickInfo[c-1-p].lastBidVolume;
-        ask += subTickInfo[c-1-p].lastAskVolume;
+        bid += subTickInfo[c - 1 - p].lastBidVolume;
+        ask += subTickInfo[c - 1 - p].lastAskVolume;
     }
     if (equalTo(bid + ask, 0.0)) {
         return 0.0;
@@ -96,10 +96,10 @@ double SinaStrategyPrivate::turnoverRatio(quint32 n, quint32 m, const QString& t
     double turnoverN = 0.0;
     double turnoverM = 0.0;
     double t = static_cast<double>(n) / static_cast<double>(m);
-    
+
     auto& subTickInfo = subTickInfos.last();
-    auto& subTickInfoM = subTickInfos[s-m-1];
-    auto& subTickInfoN = subTickInfos[s-n-1];
+    auto& subTickInfoM = subTickInfos[s - m - 1];
+    auto& subTickInfoN = subTickInfos[s - n - 1];
 
     turnoverN = subTickInfo.turnover - subTickInfoN.turnover;
     turnoverM = subTickInfo.turnover - subTickInfoM.turnover;
@@ -206,8 +206,7 @@ void SinaStrategy::onTick(TickInfoPointer& info) {
     //     }
     auto& part = d->parts[ticker];
     QVector<SubTickInfo>& subTickInfos = part.subTickInfos;
-    subTickInfos.append(
-        {info->turnover(), info->volume(), info->askPrice(FirstOrder), info->bidPrice(FirstOrder)});
+    subTickInfos.append({info->turnover(), info->volume(), info->askPrice(FirstOrder), info->bidPrice(FirstOrder)});
     quint64 bid, ask;
     d->getVolumes(ask, bid, ticker);
     auto& currentTick = subTickInfos.last();
@@ -264,7 +263,6 @@ const QUuid& SinaStrategy::uuid() {
     }
     return d->uuid;
 }
-
 
 void SinaStrategy::acceptGateway(const QUuid& gatewayId) {
     d->gateway = gatewayId;
