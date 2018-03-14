@@ -12,7 +12,3 @@ target_link_libraries(sinastrategy Qt5::Core)
 add_library(rpcstrategyserver MODULE rpc/rpcstrategyserver.cpp)
 target_link_libraries(rpcstrategyserver Qt5::Core)
 
-
-configure_file(spreadtrading/spreadtrading.json.in  ${CMAKE_CURRENT_BINARY_DIR}/spreadtrading.json)
-add_library(spreadtradingstrategy MODULE spreadtrading/spreadtrading.cpp)
-target_link_libraries(spreadtradingstrategy Qt5::Core)

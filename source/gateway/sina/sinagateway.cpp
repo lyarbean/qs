@@ -4,6 +4,7 @@
 #include <QCoreApplication>
 #include <QTextCodec>
 #include <QDebug>
+#include "core/shmtickinfo.h"
 namespace Qs {
 static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, void* userp) {
     size_t realsize = size * nmemb;
@@ -60,6 +61,7 @@ void SinaGatewayPrivate::fetch() {
             // FIXME Use shared pointer
             TickInfoPointer tick = QSharedPointer<SinaTickInfo>::create(datum, q->uuid());
             emit q->hasTick(tick);
+            ShmTickInfo::create(*tick);
         }
     } else {
         fprintf(stderr, "curl_easy_perform() failed: %s\n", curl_easy_strerror(res));

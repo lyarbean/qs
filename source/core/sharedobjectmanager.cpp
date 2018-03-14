@@ -1,0 +1,3 @@
+#include "sharedobjectmanager.h"
+
+

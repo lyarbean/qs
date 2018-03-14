@@ -69,7 +69,7 @@ void SinaTickInfoPrivate::parse(const QString& source) {
     }
     // 30
     auto day = items.value(30);
-    auto time = items.value(30);
+    auto time = items.value(31);
     day.replace('-', "");
     time.replace(':', "");
     day += time + "000";
