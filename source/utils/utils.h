@@ -41,6 +41,10 @@ inline bool greaterThanOrEqualTo(const double& lhs, const double& rhs) {
 
 // XTP format
 // yyyyMMddHHmmsszzz
+inline qint32 dateOf(quint64 datetime) {
+    return datetime / static_cast<quint64>(1E9);
+}
+
 inline qint32 yearOf(quint64 datetime) {
     return datetime / static_cast<quint64>(1E13);
 }

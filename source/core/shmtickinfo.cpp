@@ -7,7 +7,6 @@ using namespace Qs;
 
 const int MaxTickCount = 100000; // for One trade day
 
-
 QByteArray toShmBytes(const TickInfo& t) {
     QByteArrayList p;
     p << t.gateway().toByteArray();
@@ -23,7 +22,7 @@ QsTick fromTickInfo(const TickInfo& t) {
     auto gateway = t.gateway().toByteArray();
     memcpy(tick.gateway, gateway.data(), gateway.count());
     tick.datetime = t.datetime();
-    tick.bid1Price = t.bidPrice(FirstOrder);
+    tick.bidPrice[FirstOrder] = t.bidPrice(FirstOrder);
     return tick;
 }
 
@@ -35,31 +34,46 @@ ShmTickInfoPrivate::~ShmTickInfoPrivate() {
 
 // gateway_ticker_datetime
 void ShmTickInfoPrivate::set(const TickInfo& t) {
-    QByteArrayList p;
-    p << t.gateway().toByteArray().replace('{', '_').replace('}', '_');
-    p << t.ticker();
-    p << QByteArray::number(t.datetime());
-    path = "/";
-    path.append(p.join('_'));
-    QsTick* tick = SharedObjectManager::instance().allocate<QsTick>(path, index);
-    if (!tick) {
+//     QByteArrayList p;
+//     p << t.gateway().toByteArray().replace('{', '_').replace('}', '_');
+//     p << t.ticker();
+//     p << QByteArray::number(t.datetime());
+//     path = "/";
+//     path.append(p.join('_'));
+    // QByteArray& gateway, InfoKind infoKind, QByteArray& contract, QByteArray& date
+    path = infoPathOf(t.gateway().toByteArray(), TickInfoKind, t.ticker(),
+                      QByteArray::number( dateOf(t.datetime())));
+    QsTick* tick = nullptr;
+    bool ok = SharedObjectManager::instance().allocate<QsTick>(path, tick, index);
+    if (!ok) {
         // issue error
+        Q_ASSERT(tick);
         qCritical() << "No tick";
         return;
     }
     QsTick qsTick = fromTickInfo(t);
     memcpy(tick, &qsTick, sizeof(QsTick));
+    if (index) {
+        auto t = SharedObjectManager::instance().get<QsTick>(path, index - 1);
+        qCritical() << t->gateway << t->bidPrice[FirstOrder];
+    }
 }
 
 QsTick* ShmTickInfoPrivate::tick() {
-    QsTick* t = SharedObjectManager::instance().allocate<QsTick>(path, index);
-    return t;
+    return SharedObjectManager::instance().get<QsTick>(path, index);
 }
 
 ShmTickInfo::ShmTickInfo(const QUuid& gateway)
   : TickInfo(gateway)
   , d(new ShmTickInfoPrivate(this)) {
 }
+
+
+Qs::ShmTickInfo::~ShmTickInfo()
+{
+    delete d;
+}
+
 
 ShmTickInfo ShmTickInfo::create(const TickInfo& t) {
     ShmTickInfo info(t.gateway());
@@ -77,22 +91,27 @@ QByteArray ShmTickInfo::ticker() const {
 
 // TODO
 QByteArray ShmTickInfo::tickerName() const {
+    d->tick()->ticker;
 }
 
 // TODO
 QUuid ShmTickInfo::gateway() const {
+    d->tick()->gateway;
 }
 
 // TODO
 double ShmTickInfo::lastPrice() const {
+//     d->tick()->lastPrice();
 }
 
 // TODO
 double ShmTickInfo::preClosePrice() const {
+//     d->tick()->preClosePrice();
 }
 
 // TODO
 double ShmTickInfo::openPrice() const {
+//     d->tick()->openPrice();
 }
 
 // TODO

@@ -22,10 +22,10 @@ static size_t WriteMemoryCallback(void* contents, size_t size, size_t nmemb, voi
     mem->memory[mem->size] = 0;
     return realsize;
 }
-
+static bool is_CURL_GLOBAL_ALL_initialized = false;
 SinaGatewayPrivate::SinaGatewayPrivate(SinaGateway* q)
   : q(q) {
-    curlHandler = curl_easy_init();
+
 }
 SinaGatewayPrivate::~SinaGatewayPrivate() {
     curl_easy_cleanup(curlHandler);
@@ -35,6 +35,12 @@ const QString prefixUri = "http://hq.sinajs.cn/list=";
 
 void SinaGatewayPrivate::fetch() {
 
+    if (!is_CURL_GLOBAL_ALL_initialized) {
+        is_CURL_GLOBAL_ALL_initialized = true;
+    }
+    if(!curlHandler) {
+        curlHandler = curl_easy_init();
+    }
     if (urls.isEmpty()) {
         return;
     }
@@ -52,7 +58,7 @@ void SinaGatewayPrivate::fetch() {
     if (res == CURLE_OK) {
         QByteArray buffer(received.memory, received.size);
         QString converted = QTextCodec::codecForName("GBK")->toUnicode(buffer);
-        //         qCritical() << converted;
+                qCritical() << converted;
         auto data = converted.split('\n');
         for (auto& datum : data) {
             if (datum.isEmpty()) {
@@ -72,10 +78,6 @@ void SinaGatewayPrivate::fetch() {
 
 SinaGateway::SinaGateway()
   : d(new SinaGatewayPrivate(this)) {
-    curl_global_init(CURL_GLOBAL_ALL);
-    d->timer = new QTimer(this);
-    connect(d->timer, SIGNAL(timeout()), this, SLOT(pull()), Qt::QueuedConnection);
-    d->timer->start(3000);
 }
 
 SinaGateway::~SinaGateway() {
@@ -84,6 +86,11 @@ SinaGateway::~SinaGateway() {
 
 void SinaGateway::connectToServer() {
     // do nothing
+    d->timer = new QTimer;
+    connect(d->timer, &QTimer::timeout, [this]() {
+        QMetaObject::invokeMethod(this, "pull", Qt::QueuedConnection);
+    });
+    d->timer->start(3000);
 }
 
 void SinaGateway::disconnectFromServer() {

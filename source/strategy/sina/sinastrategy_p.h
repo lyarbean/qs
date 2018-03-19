@@ -44,6 +44,7 @@ struct SinaStrategyPart {
     bool hasP3 = false;
 };
 
+class SinaStrategy;
 class SinaStrategyPrivate {
 public:
     SinaStrategyPrivate(SinaStrategy* q);
@@ -59,7 +60,7 @@ public:
     void applyAskOrders(const SinaStrategyPart& part, TickInfoPointer& info);
     void applyBidOrders(const SinaStrategyPart& part, TickInfoPointer& info);
 
-    class SinaStrategy* const q;
+    SinaStrategy* const q;
     QMap<QString, SinaStrategyPart> parts;
     QUuid uuid;
     QUuid gateway;

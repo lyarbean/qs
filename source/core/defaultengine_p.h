@@ -7,6 +7,7 @@ namespace Qs {
 class StrategyAbstract;
 class RiskManager;
 class PositionManager;
+class DefaultEngine;
 class DefaultEnginePrivate {
 public:
     DefaultEnginePrivate(DefaultEngine* q);

@@ -7,7 +7,6 @@
 namespace Qs {
 class EngineAbstract;
 class RecordStrategy;
-
 class RecordStrategyPrivate {
 public:
     RecordStrategyPrivate(RecordStrategy* q);

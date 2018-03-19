@@ -6,9 +6,10 @@
 // /gateway/ticker/hour/minute/{tick}*
 
 namespace Qs {
-
+class ShmTickInfoPrivate;
 class ShmTickInfo : public TickInfo {
 public:
+    virtual ~ShmTickInfo();
     // ShmTickInfo(const QUuid& gateway);
     static ShmTickInfo create(const TickInfo&);
     virtual QByteArray ticker() const override;
@@ -76,7 +77,7 @@ private:
     ShmTickInfo(const ShmTickInfo&) = default;
 
 private:
-    class ShmTickInfoPrivate* const d;
+    ShmTickInfoPrivate* const d;
 };
 }
 

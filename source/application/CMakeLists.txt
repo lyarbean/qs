@@ -10,3 +10,5 @@ target_link_libraries(showsinatick Qt5::Core)
 
 add_executable(plugininfoviewer plugininfoviewer.cpp ../core/strategyabstract.cpp ../core/gatewayabstract.cpp)
 target_link_libraries(plugininfoviewer qscore Qt5::Core Qt5::Gui Qt5::Widgets )
+
+add_subdirectory(server)

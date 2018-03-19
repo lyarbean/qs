@@ -24,8 +24,9 @@ DefaultEngine::~DefaultEngine() {
 }
 
 void DefaultEngine::connectServers() {
-    for (auto g : d->gateways)
-        g.data()->connectToServer();
+    for (auto g : d->gateways) {
+        QMetaObject::invokeMethod(g.data(), "connectToServer", Qt::QueuedConnection);
+    }
 }
 
 void DefaultEngine::connectServer(const QUuid& uuid) {
@@ -180,7 +181,7 @@ void DefaultEngine::Subscribe(SubscribeRequestPointer& request, const QUuid& gat
     auto ref = g.value().lock();
     if (ref) {
         ref->subscribe(request);
-        //         d->subscribeRequests[gateway].append(request);
+//         d->subscribeRequests[gateway].append(request);
     } else {
         // request->status = GatewayIsGone;
         //         d->abandonedSubscribeRequests[gateway].append(request);

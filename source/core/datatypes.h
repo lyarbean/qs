@@ -278,7 +278,7 @@ public:
         return 0;
     } // UA3113
     virtual bool isMarketClosed() const {
-        return 0;
+        return false;
     } // UA103/UA104
     virtual double totalPosition() const {
         return 0;
@@ -334,7 +334,7 @@ public:
 typedef QSharedPointer<OrderInfo> OrderInfoPointer;
 
 // Gateway should keep a table mapping from internal id to a uuid.
-class OrderCancelInfo final {
+class OrderCancelInfo {
 public:
     const QUuid& id() const {
         return uuid;
@@ -372,7 +372,7 @@ public:
 
 typedef QSharedPointer<ContractInfo> ContractInfoPointer;
 
-class OrderRequest final {
+class OrderRequest {
 public:
     OrderRequest(const QUuid& gateway) {
         status = InitialRequest;
@@ -381,7 +381,7 @@ public:
     }
     RequestStatus status;
     QUuid id;
-    QUuid gatewayId;
+    QUuid gatewayId; // to which gateway
     QByteArray ticker;
     double price;
     quint32 volume;
@@ -392,7 +392,7 @@ public:
 
 typedef QSharedPointer<OrderRequest> OrderRequestPointer;
 
-class CancelOrderRequest final {
+class CancelOrderRequest {
 public:
     explicit CancelOrderRequest(const QUuid& gateway, const QUuid& order) {
         status = InitialRequest;
@@ -408,7 +408,7 @@ public:
 
 typedef QSharedPointer<CancelOrderRequest> CancelOrderRequestPointer;
 
-class SubscribeRequest final {
+class SubscribeRequest {
 public:
     explicit SubscribeRequest(const QUuid& gateway, const QByteArrayList& tickers) {
         status = InitialRequest;

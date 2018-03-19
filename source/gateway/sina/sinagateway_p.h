@@ -19,7 +19,7 @@ public:
     void fetch();
     class SinaGateway* const q;
     MemoryStruct received;
-    CURL* curlHandler;
+    CURL* curlHandler = nullptr;
     QTimer* timer;
     QByteArrayList urls;
     QUuid uuid;

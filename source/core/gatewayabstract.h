@@ -3,6 +3,7 @@
 #include <QObject>
 #include <QtPlugin>
 #include "datatypes.h"
+
 namespace Qs {
 class GatewayAbstract : public QObject {
     Q_OBJECT

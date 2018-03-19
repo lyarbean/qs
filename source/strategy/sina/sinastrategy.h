@@ -3,7 +3,7 @@
 #include "core/strategyabstract.h"
 
 namespace Qs {
-
+class SinaStrategyPrivate;
 class SinaStrategy : public Qs::StrategyAbstract {
     Q_OBJECT
     Q_PLUGIN_METADATA(IID "com.investredcat.QuantitativeSystem.StrategyAbstract" FILE "sinastrategy.json")
@@ -18,7 +18,7 @@ public:
     virtual void acceptGateway(const QUuid& gatewayId) override;
 
 private:
-    class SinaStrategyPrivate* const d;
+    SinaStrategyPrivate* const d;
 };
 } // namespace Qs
 
