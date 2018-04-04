@@ -16,13 +16,13 @@ struct QsTick {
     char ticker[16] = {0};
     char gateway[40] = {0}; // {00000000-0000-0000-0000-000000000000}
     quint64 datetime = 0;
-    double upperLimitPrice = 0.0;
-    double lowerLimitPrice = 0.0;
+    double upperLimitPrice = 1.0E10;
+    double lowerLimitPrice = 1.0E-10;
     quint64 volume = 0;
     double turnover = 0.0;
     double averagePrice = 0.0;
     union D {
-        double dummy[10] = {0.0};
+        double dummy[32] = {0.0};
         struct Stock {
             double lastPrice;
             double preClosePrice;
@@ -46,9 +46,9 @@ struct QsTick {
         } etf;
     } d;
     // Order book
-    double bidPrice[10] = {0.0};
+    double bidPrice[10] = {1.0E10};
     quint64 bidVolume[10] = {0};
-    double askPrice[10] = {0.0};
+    double askPrice[10] = {1.0E-10};
     quint64 askVolume[10] = {0};
 };
 
@@ -60,6 +60,7 @@ public:
     void set(const TickInfo& t);
     QsTick* tick();
 private:
+    friend class ShmTickInfo;
     ShmTickInfo* const q;
     QByteArray path;
     int index = -1;

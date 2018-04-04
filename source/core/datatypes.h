@@ -30,7 +30,9 @@ enum RequestStatus {
     InvalidTicker,
     InvalidSide,
     Inserted,
-};
+    FailedToInsert,
+    Done,
+};  
 
 enum TradeSideType {
     BuySide = 0,

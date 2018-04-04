@@ -2,6 +2,8 @@
 #include "shmtickinfo_p.h"
 #include "utils/utils.h"
 #include "sharedobjectmanager.h"
+#include "ipcdatatypes.h"
+#include "readwritelocker.h"
 #include <QDebug>
 using namespace Qs;
 
@@ -41,8 +43,7 @@ void ShmTickInfoPrivate::set(const TickInfo& t) {
 //     path = "/";
 //     path.append(p.join('_'));
     // QByteArray& gateway, InfoKind infoKind, QByteArray& contract, QByteArray& date
-    path = infoPathOf(t.gateway().toByteArray(), TickInfoKind, t.ticker(),
-                      QByteArray::number( dateOf(t.datetime())));
+    path = infoPathOf(t.gateway().toByteArray(), TickInfoKind, t.ticker());
     QsTick* tick = nullptr;
     bool ok = SharedObjectManager::instance().allocate<QsTick>(path, tick, index);
     if (!ok) {
@@ -53,10 +54,34 @@ void ShmTickInfoPrivate::set(const TickInfo& t) {
     }
     QsTick qsTick = fromTickInfo(t);
     memcpy(tick, &qsTick, sizeof(QsTick));
-    if (index) {
-        auto t = SharedObjectManager::instance().get<QsTick>(path, index - 1);
-        qCritical() << t->gateway << t->bidPrice[FirstOrder];
+    //  Notification
+    // TODO benchmark
+    // deliver to another thread
+    QByteArray metaDataPath = path + "_meta";
+    Qs::FutexReadWriteLocker locker(path);
+    MetaData* m = SharedObjectManager::instance().get<MetaData>(metaDataPath, 0);
+    if (!m) {
+        int index;
+        if (!SharedObjectManager::instance().allocate<MetaData, 1>(metaDataPath, m, index)) {
+            // TODO emit failure
+            return;
+        }
+        locker.lockForWrite();
+        m->unitSize = sizeof(QsTick);
+        m->length = 100000;
+        m->cursor = 1;
+        m->flag = 0;
+        locker.unlockForWrite();
     }
+    else {
+        locker.lockForWrite();
+        m->cursor ++;
+        locker.unlockForWrite();
+    }
+//     if (index) {
+//         auto t = SharedObjectManager::instance().get<QsTick>(path, index - 1);
+//         qCritical() << t->gateway << t->bidPrice[FirstOrder];
+//     }
 }
 
 QsTick* ShmTickInfoPrivate::tick() {
@@ -79,6 +104,17 @@ ShmTickInfo ShmTickInfo::create(const TickInfo& t) {
     ShmTickInfo info(t.gateway());
     info.d->set(t);
     return info;
+}
+
+
+ShmTickInfo* ShmTickInfo::create(const QUuid& gateway, const QByteArray& path, int index) {
+    if (!SharedObjectManager::instance().get<QsTick>(path, index)) {
+        return nullptr;
+    }
+    auto self = new ShmTickInfo(gateway);
+    self->d->path = path;
+    self->d->index = index;
+    return self;
 }
 
 QByteArray ShmTickInfo::ticker() const {

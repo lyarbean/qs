@@ -7,7 +7,7 @@
 #include <fcntl.h>    /* For O_* constants */
 #include <unistd.h>
 #include <cstring>
-#include "datatypes.h"
+#include "core/datatypes.h"
 
 namespace Qs {
 // TODO MT-safe
@@ -137,21 +137,17 @@ inline QByteArray infoKindNameOf(InfoKind infoKind) {
 * 
 * @param gateway p_gateway: the uuid of gateway
 * @param infoKind p_infoKind: the kind the path interests
-* @param contract p_contract: the contract the path associated
+* @param ticker p_ticker: the ticker the path associated
 * @param date p_date:
 * @return QByteArray {ef002017-6a4b-4d92-91a4-279796af9674}_0_sz002268_20180319
 
 */
 
-inline QByteArray infoPathOf(const QByteArray& gateway, InfoKind infoKind, const QByteArray& contract, const QByteArray& date) {
-    if (infoKind == RequestInfoKind) {
-        // Ignore contract
-        return QByteArray("/").append(gateway).append('_')
-        .append(infoKindNameOf(infoKind)).append('_').append(date);
-    }
-    return QByteArray("/").append(gateway).append('_')
+inline QByteArray infoPathOf(const QByteArray& gateway, InfoKind infoKind, const QByteArray& ticker) {
+    return QByteArray("/")
         .append(infoKindNameOf(infoKind)).append('_')
-        .append(contract).append('_').append(date);
+        .append(gateway).append('_')
+        .append(ticker);
 }
 
 

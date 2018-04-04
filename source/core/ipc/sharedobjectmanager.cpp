@@ -7,6 +7,7 @@ void SharedObjectManager::close(const QByteArray& path) {
     Ref& ref = pathToRef[path];
     munlock(ref.head, ref.allocated);
     munmap(ref.head, ref.allocated);
+    shm_unlink(path);
     pathToRef.remove(path);
 }
 
@@ -16,6 +17,7 @@ void SharedObjectManager::closeAll() {
         munlock(ref.head, ref.allocated);
         munmap(ref.head, ref.allocated);
     }
+    // shm_unlink(path);
     pathToRef.clear();
 }
 

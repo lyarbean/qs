@@ -1,7 +1,7 @@
 #ifndef QS_SHMTICKINFO_H
 #define QS_SHMTICKINFO_H
 
-#include "datatypes.h"
+#include "core/datatypes.h"
 
 // /gateway/ticker/hour/minute/{tick}*
 
@@ -12,6 +12,7 @@ public:
     virtual ~ShmTickInfo();
     // ShmTickInfo(const QUuid& gateway);
     static ShmTickInfo create(const TickInfo&);
+    static ShmTickInfo* create(const QUuid& gateway, const QByteArray& path, int index);
     virtual QByteArray ticker() const override;
     virtual QByteArray tickerName() const override;
     virtual QUuid gateway() const override;

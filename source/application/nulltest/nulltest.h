@@ -126,7 +126,7 @@ public:
     }
     QUuid gateway; // allowed gateway
     QUuid id;
-    quint64 received;
+    volatile quint64 received;
 };
 
 class NullGateway : public GatewayAbstract {
@@ -174,7 +174,7 @@ public:
     }
 
 private:
-    quint64 received;
+    volatile quint64 received;
     QUuid id;
     volatile bool toExit;
 };

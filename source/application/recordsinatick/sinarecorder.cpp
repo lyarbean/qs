@@ -8,8 +8,10 @@
 #include "core/defaultengine.h"
 #include "core/strategyabstract.h"
 #include "core/gatewayabstract.h"
+#include "utils/eventdispatcher_epoll.h"
 
 int main(int argc, char* argv[]) {
+    QCoreApplication::setEventDispatcher(new EventDispatcherEPoll);
     QCoreApplication app(argc, argv);
     // Load plugins
     // [1] Strategy
@@ -31,6 +33,8 @@ int main(int argc, char* argv[]) {
     }
     // Moved to a separate thread
     QThread strategyThread;
+    strategyThread.setEventDispatcher(new EventDispatcherEPoll);
+
     strategy->moveToThread(&strategyThread);
     strategyThread.start();
 
@@ -54,6 +58,8 @@ int main(int argc, char* argv[]) {
 
     // Moved to a separate thread
     QThread gatewayThread;
+    gatewayThread.setEventDispatcher(new EventDispatcherEPoll);
+
     gateway->moveToThread(&gatewayThread);
     gatewayThread.start();
 
